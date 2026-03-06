@@ -16,4 +16,5 @@ const firebaseApp = admin.initializeApp({
     } as admin.ServiceAccount),
 });
 
+export { admin };
 export default firebaseApp;

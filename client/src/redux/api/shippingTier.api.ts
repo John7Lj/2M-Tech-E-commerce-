@@ -42,8 +42,8 @@ export const shippingTierApi = createApi({
     reducerPath: 'shippingTierAPI',
     baseQuery: fetchBaseQuery({
         baseUrl: import.meta.env.VITE_SERVER_URL 
-            ? `${import.meta.env.VITE_SERVER_URL}/api/v1/shippingTiers`
-            : `/api/v1/shippingTiers`,
+            ? `${import.meta.env.VITE_SERVER_URL}/shippingTiers`
+            : `/shippingTiers`,
         credentials: 'include',
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');

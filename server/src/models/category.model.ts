@@ -41,7 +41,7 @@ const categorySchema = new Schema<ICategory>({
 });
 
 // Create URL-friendly value from name - Fixed to run before validation
-categorySchema.pre('validate', function(next) {
+categorySchema.pre('validate', function (next) {
   if (this.name && (!this.value || this.isModified('name'))) {
     this.value = this.name
       .toLowerCase()
@@ -55,7 +55,6 @@ categorySchema.pre('validate', function(next) {
 });
 
 // Add index for better performance
-categorySchema.index({ value: 1 });
 categorySchema.index({ name: 1 });
 categorySchema.index({ isActive: 1 });
 

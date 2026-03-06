@@ -9,13 +9,15 @@ interface MobileUserButtonProps {
 const MobileUserButton: React.FC<MobileUserButtonProps> = ({ onClick }) => {
   return (
     <div className="md:hidden">
-      <motion.button 
+      <motion.button
         onClick={onClick}
-        className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all duration-200"
+        className="flex items-center justify-center p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all"
         whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.98 }}
+        whileTap={{ scale: 0.95 }}
       >
-        <User className="w-4 h-4 text-purple-600" />
+        <div className="p-2 bg-primary/5 dark:bg-primary/10 rounded-lg">
+          <User className="w-5 h-5 text-primary" />
+        </div>
       </motion.button>
     </div>
   );

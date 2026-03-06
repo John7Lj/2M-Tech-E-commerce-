@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa'; // Import icons from react-icons/fa
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 interface FilterOptionsProps {
     categories: string[];
@@ -14,7 +14,6 @@ interface FilterOptionsProps {
     clearFilters: () => void;
 }
 
-// Functional component for filter options
 const FilterOptions: React.FC<FilterOptionsProps> = ({
     categories,
     selectedCategory,
@@ -27,40 +26,49 @@ const FilterOptions: React.FC<FilterOptionsProps> = ({
     setSort,
     clearFilters,
 }) => {
-    // State to toggle the visibility of categories
     const [showCategories, setShowCategories] = useState(true);
 
     return (
-        <div className="p-4 bg-white rounded-lg shadow-lg border border-gray-200">
+        <div className="p-6 bg-white dark:bg-secondary-dark rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 transition-colors duration-500">
             {/* Sort options */}
-            <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Sort</label>
-                <select
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md border"
-                    value={sort}
-                    onChange={(e) => setSort(e.target.value as 'asc' | 'desc' | 'relevance')}
-                >
-                    <option value="relevance">Relevance</option>
-                    <option value="asc">Price: Low to High</option>
-                    <option value="desc">Price: High to Low</option>
-                </select>
+            <div className="mb-6">
+                <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-3">Sort By</label>
+                <div className="relative">
+                    <select
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none text-sm font-bold text-gray-700 dark:text-gray-200 transition-all"
+                        value={sort}
+                        onChange={(e) => setSort(e.target.value as 'asc' | 'desc' | 'relevance')}
+                    >
+                        <option value="relevance">Relevance</option>
+                        <option value="asc">Price: Low to High</option>
+                        <option value="desc">Price: High to Low</option>
+                    </select>
+                    <FaChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+                </div>
             </div>
+
             {/* Category filter */}
-            <div className="mb-4">
-                <div className="flex items-center justify-between cursor-pointer" onClick={() => setShowCategories(!showCategories)}>
-                    <h3 className="text-lg font-medium text-gray-900">Categories</h3>
-                    {showCategories ? <FaChevronUp className="h-5 w-5 text-gray-500" /> : <FaChevronDown className="h-5 w-5 text-gray-500" />}
+            <div className="mb-6">
+                <div
+                    className="flex items-center justify-between cursor-pointer group"
+                    onClick={() => setShowCategories(!showCategories)}
+                >
+                    <h3 className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">Categories</h3>
+                    {showCategories ? (
+                        <FaChevronUp className="h-4 w-4 text-gray-400 group-hover:text-primary transition-colors" />
+                    ) : (
+                        <FaChevronDown className="h-4 w-4 text-gray-400 group-hover:text-primary transition-colors" />
+                    )}
                 </div>
                 {showCategories && (
-                    <ul className="mt-2 space-y-1">
+                    <ul className="mt-4 space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
                         {categories.map((category) => (
                             <li
                                 key={category}
-                                className={`cursor-pointer px-3 py-2 rounded-md ${
-                                    selectedCategory === category
-                                        ? 'bg-indigo-500 text-white'
-                                        : 'hover:bg-gray-200'
-                                }`}
+                                className={`cursor-pointer px-4 py-3 rounded-xl text-sm font-bold transition-all ${selectedCategory === category
+                                        ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                        : 'text-gray-600 dark:text-gray-400 hover:bg-primary/5 dark:hover:bg-primary/10 hover:text-primary'
+                                    }`}
                                 onClick={() => setSelectedCategory(category)}
                             >
                                 {category}
@@ -69,25 +77,26 @@ const FilterOptions: React.FC<FilterOptionsProps> = ({
                     </ul>
                 )}
             </div>
+
             {/* Price filter */}
-            <div className="mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Price</h3>
-                <div className="flex flex-col space-y-2">
-                    <div className="flex space-x-2 items-center">
-                        <label className="w-1/2 text-sm font-medium text-gray-700">Starting Range</label>
+            <div className="mb-8">
+                <h3 className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">Price Range</h3>
+                <div className="space-y-4">
+                    <div className="space-y-1.5">
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Min</span>
                         <input
                             type="number"
-                            className="w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                            className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                             placeholder="Min Price"
                             value={minPrice || ''}
                             onChange={(e) => setMinPrice(Number(e.target.value))}
                         />
                     </div>
-                    <div className="flex space-x-2 items-center">
-                        <label className="w-1/2 text-sm font-medium text-gray-700">Ending Range</label>
+                    <div className="space-y-1.5">
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Max</span>
                         <input
                             type="number"
-                            className="w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                            className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                             placeholder="Max Price"
                             value={maxPrice || ''}
                             onChange={(e) => setMaxPrice(Number(e.target.value))}
@@ -95,9 +104,10 @@ const FilterOptions: React.FC<FilterOptionsProps> = ({
                     </div>
                 </div>
             </div>
+
             {/* Clear filters button */}
             <button
-                className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition-colors duration-200"
+                className="w-full bg-primary text-white py-4 rounded-xl font-black uppercase tracking-[0.2em] text-xs hover:bg-primary-dark transition-all shadow-xl shadow-primary/20 active:scale-95"
                 onClick={clearFilters}
             >
                 Clear Filters

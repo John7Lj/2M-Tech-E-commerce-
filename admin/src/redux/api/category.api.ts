@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export interface Category {
   _id: string;
-  name: string;a
+  name: string; a
   nameAr: string;
   value: string;
   description?: string;
@@ -29,8 +29,30 @@ interface CategoryResponse {
 export const categoryApi = createApi({
   reducerPath: 'categoryApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_SERVER_URL}/api/v1/categories`,
+    baseUrl: `${import.meta.env.VITE_SERVER_URL}/categories`,
     credentials: 'include',
+            prepareHeaders: async (headers) => {
+            const token = localStorage.getItem('admin_token');
+            const authPrefix = 'Bearer ';
+
+            try {
+                const { auth } = await import('../../firebaseConfig');
+                const user = auth.currentUser;
+                
+                if (user) {
+                    const freshToken = await user.getIdToken();
+                    headers.set('Authorization', authPrefix + freshToken);
+                } else if (token) {
+                    headers.set('Authorization', authPrefix + token);
+                }
+            } catch (error) {
+                if (token) {
+                    headers.set('Authorization', authPrefix + token);
+                }
+            }
+            
+            return headers;
+        },
   }),
   tagTypes: ['Category'],
   endpoints: (builder) => ({

@@ -5,11 +5,13 @@ import { Search } from 'lucide-react';
 
 const SearchButton: React.FC = () => {
   return (
-    <Link 
-      to="/search" 
-      className="flex items-center space-x-2 md:space-x-3 px-4 md:px-5 lg:px-6 py-2 md:py-3 lg:py-4 text-sm md:text-base lg:text-lg font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all duration-200"
+    <Link
+      to="/search"
+      className="flex items-center space-x-2 md:space-x-3 px-4 py-2 text-sm font-bold text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-light hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 group"
     >
-      <Search className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-purple-600" />
+      <div className="p-2 bg-primary/5 dark:bg-primary/10 rounded-lg group-hover:bg-primary/10 transition-colors">
+        <Search className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+      </div>
       <span className="hidden sm:inline">Search</span>
     </Link>
   );

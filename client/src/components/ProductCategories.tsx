@@ -4,7 +4,7 @@ import { useCategoriesQuery } from '../redux/api/product.api';
 const ProductCategories: React.FC = () => {
   // Fetch categories using a Redux API hook
   const { data: categoryData, isLoading: categoryLoading, isError: categoryError } = useCategoriesQuery('');
-  
+
   // Refs for category container and state for scroll control
   const categoryContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -70,7 +70,7 @@ const ProductCategories: React.FC = () => {
         {/* Category Buttons */}
         <div className="flex space-x-4 mb-4 overflow-x-auto py-2 scrollbar-hide" ref={categoryContainerRef}>
           {categories.map((category) => (
-            <button key={category} className="border border-blue-500 text-blue-500 px-4 py-2 rounded-full whitespace-nowrap hover:bg-blue-500 hover:text-white transition-colors">
+            <button key={category} className="border border-primary text-primary px-6 py-2 rounded-full whitespace-nowrap hover:bg-primary hover:text-white transition-all font-black uppercase tracking-widest text-[10px] shadow-sm">
               {category}
             </button>
           ))}

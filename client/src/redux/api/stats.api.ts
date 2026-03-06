@@ -7,8 +7,8 @@ export const statsApi = createApi({
     reducerPath: 'statsApi',
 baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_SERVER_URL 
-        ? `${import.meta.env.VITE_SERVER_URL}/api/v1/stats`
-        : `/api/v1/stats`,
+        ? `${import.meta.env.VITE_SERVER_URL}/stats`
+        : `/stats`,
     credentials: 'include',
     prepareHeaders: (headers) => {
         headers.set('Content-Type', 'application/json');

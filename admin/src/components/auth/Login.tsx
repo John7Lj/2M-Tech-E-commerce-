@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { FcGoogle } from "react-icons/fc";
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom'; // ADD THIS
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { auth } from '../../firebaseConfig';
 import { useLoginUserMutation } from '../../redux/api/user.api';
 import { userExists } from '../../redux/reducers/user.reducer';
-import { AppDispatch, RootState } from '../../redux/store';
+import { AppDispatch } from '../../redux/store';
 import { notify } from '../../utils/util';
 import { motion } from 'framer-motion';
 import {
@@ -26,65 +26,41 @@ const LoginPage: React.FC = () => {
 
     const [loginUser] = useLoginUserMutation();
     const dispatch = useDispatch<AppDispatch>();
-    const navigate = useNavigate(); // ADD THIS
-    
-    // ADD THIS - Get current user from Redux for debugging
-    const currentUser = useSelector((state: RootState) => state.user.user);
-    
-    console.log('Login Component - Current Redux User:', currentUser); // DEBUG
+    const navigate = useNavigate();
 
-    // Enhanced response handler with manual navigation
     const handleResponse = async (userCredential: UserCredential, successMessage: string, failureMessage: string) => {
         try {
-            console.log('=== STARTING LOGIN PROCESS ===');
-            console.log('Getting ID token...');
             const idToken = await userCredential.user.getIdToken(true);
-            
-            console.log('Sending login request to server...');
-            console.log('Server URL:', import.meta.env.VITE_SERVER_URL);
-            
             const response = await loginUser({ idToken }).unwrap();
-            
-            console.log('=== SERVER RESPONSE ===', response);
 
             if (response.user) {
-                console.log('=== DISPATCHING USER TO REDUX ===');
-                console.log('User data:', response.user);
-                
+                // Store token for header-based auth fallback
+                if (response.token) {
+                    localStorage.setItem('admin_token', response.token);
+                }
+
                 dispatch(userExists(response.user));
                 notify(successMessage, 'success');
-                
-                // FORCE NAVIGATION - Add manual redirect
-                console.log('=== CHECKING USER ROLE FOR REDIRECT ===');
+
                 if (response.user.role === 'admin') {
-                    console.log('User is admin, redirecting to admin dashboard...');
                     setTimeout(() => {
                         navigate('/admin/dashboard', { replace: true });
-                    }, 100); // Small delay to ensure Redux state updates
+                    }, 100);
                 } else {
-                    console.log('User is not admin, staying on auth page');
                     notify('Access denied. Admin privileges required.', 'error');
                 }
             } else {
-                console.error('No user in response:', response);
                 notify(failureMessage, 'error');
             }
         } catch (error: any) {
-            console.error('=== LOGIN ERROR ===', {
-                error,
-                message: error?.message,
-                data: error?.data,
-                status: error?.status
-            });
-            
             let errorMessage = 'An unknown error occurred';
-            
+
             if (error?.data?.message) {
                 errorMessage = error.data.message;
             } else if (error?.message) {
                 errorMessage = error.message;
             }
-            
+
             if (error?.status === 401) {
                 errorMessage = 'Authentication failed. Please try again.';
             } else if (error?.status === 403) {
@@ -92,7 +68,7 @@ const LoginPage: React.FC = () => {
             } else if (error?.status >= 500) {
                 errorMessage = 'Server error. Please try again later.';
             }
-            
+
             notify(errorMessage, 'error');
         } finally {
             setIsLoading(false);
@@ -101,28 +77,20 @@ const LoginPage: React.FC = () => {
 
     const handleGoogleLogin = async () => {
         setIsLoading(true);
-        console.log('=== STARTING GOOGLE LOGIN ===');
-        
+
         try {
             const provider = new GoogleAuthProvider();
             provider.addScope('email');
             provider.addScope('profile');
-            provider.setCustomParameters({
-                prompt: 'select_account'
-            });
-            
-            console.log('Opening Google popup...');
+            provider.setCustomParameters({ prompt: 'select_account' });
+
             const userCredential = await signInWithPopup(auth, provider);
-            
-            console.log('Google popup auth successful, user:', userCredential.user.email);
-            
             await handleResponse(userCredential, LOGIN_SUCCESS, LOGIN_FAILED);
         } catch (error: unknown) {
-            console.error('Google login error:', error);
             setIsLoading(false);
-            
+
             let errorMessage = 'Google sign-in failed';
-            
+
             if (error instanceof Error) {
                 const firebaseError = error as any;
                 switch (firebaseError.code) {
@@ -142,7 +110,7 @@ const LoginPage: React.FC = () => {
                         errorMessage = error.message || 'Google sign-in failed';
                 }
             }
-            
+
             notify(errorMessage, 'error');
         }
     };
@@ -152,18 +120,14 @@ const LoginPage: React.FC = () => {
             notify('Email and password are required', 'error');
             return;
         }
-        
+
         setIsLoading(true);
-        console.log('=== STARTING EMAIL/PASSWORD LOGIN ===');
-        
+
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            console.log('Firebase email/password auth successful');
             await handleResponse(userCredential, LOGIN_SUCCESS, LOGIN_FAILED);
         } catch (error: unknown) {
-            console.error('Firebase email/password auth error:', error);
             setIsLoading(false);
-            
             if (error instanceof Error) {
                 notify(error.message, 'error');
             } else {
@@ -176,31 +140,7 @@ const LoginPage: React.FC = () => {
         <div className="flex flex-col items-center justify-center">
             <div className="w-full max-w-md bg-white rounded-lg p-6">
                 <h4 className="text-xl font-bold text-center mb-8">Login</h4>
-                
-                {/* DEBUG INFO - SHOW CURRENT STATE */}
-                {import.meta.env.DEV && (
-                    <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded text-xs">
-                        <div className="font-bold mb-2">🐛 DEBUG INFO:</div>
-                        <div>Server: {import.meta.env.VITE_SERVER_URL}</div>
-                        <div>Environment: {import.meta.env.MODE}</div>
-                        <div>Current User: {currentUser ? JSON.stringify(currentUser, null, 2) : 'None'}</div>
-                        <div>User Role: {currentUser?.role || 'N/A'}</div>
-                        <div>Is Loading: {isLoading ? 'Yes' : 'No'}</div>
-                    </div>
-                )}
-                
-                {/* MANUAL ADMIN REDIRECT BUTTON - FOR TESTING */}
-                {import.meta.env.DEV && currentUser && (
-                    <div className="mb-4">
-                        <button
-                            onClick={() => navigate('/admin/dashboard')}
-                            className="w-full bg-green-500 text-white py-2 px-4 rounded text-sm"
-                        >
-                            🚀 FORCE REDIRECT TO ADMIN (TEST)
-                        </button>
-                    </div>
-                )}
-                
+
                 <div className="mb-6">
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 1 }}>
                         <button
@@ -269,7 +209,7 @@ const LoginPage: React.FC = () => {
                     </button>
                 </motion.div>
 
-            
+
             </div>
         </div>
     );

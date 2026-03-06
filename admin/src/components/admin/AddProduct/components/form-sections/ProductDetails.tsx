@@ -8,13 +8,15 @@ interface ProductDetailsProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   onDescriptionChange: (value: string) => void;
   onStatusChange: (status: boolean) => void; // New prop
+  onFeaturedChange: (featured: boolean) => void; // New prop
 }
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
   formData,
   onInputChange,
   onDescriptionChange,
-  onStatusChange
+  onStatusChange,
+  onFeaturedChange
 }) => {
   // Calculate net price based on price and discount
   const netPrice = useMemo(() => {
@@ -29,22 +31,26 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     onStatusChange(!formData.status);
   };
 
+  const handleFeaturedToggle = () => {
+    onFeaturedChange(!formData.featured);
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-          <span className="text-green-600 font-bold">2</span>
+        <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mr-3">
+          <span className="text-primary font-bold">2</span>
         </div>
         Product Details
       </h2>
-      
+
       <div className="space-y-6">
         {/* WYSIWYG Description Editor */}
         <div className="space-y-2">
           <label className="block text-sm font-semibold text-gray-700">
             Description <span className="text-red-500">*</span>
           </label>
-          <div className="bg-white rounded-xl border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all duration-200">
+          <div className="bg-white rounded-xl border border-gray-200 focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent transition-all duration-200">
             <WysiwygEditor
               value={formData.description}
               onChange={onDescriptionChange}
@@ -69,7 +75,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 name="stock"
                 value={formData.stock}
                 onChange={onInputChange}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
                 min="0"
                 placeholder="0"
                 required
@@ -90,7 +96,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 name="price"
                 value={formData.price}
                 onChange={onInputChange}
-                className="w-full px-4 py-3 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
+                className="w-full px-4 py-3 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
                 min="0"
                 step="0.01"
                 placeholder="0.00"
@@ -109,7 +115,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 name="discount"
                 value={formData.discount}
                 onChange={onInputChange}
-                className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
+                className="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
                 min="0"
                 max="100"
                 step="0.01"
@@ -126,7 +132,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-gray-700">
-              Net Price 
+              Net Price
             </label>
             <div className="relative">
               <input
@@ -144,45 +150,51 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         </div>
 
         {/* Simplified Status Toggle */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-gray-800">Publication Status</h3>
-              <p className="text-sm text-gray-600">
-                Control whether this product is visible to customers
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center cursor-pointer" onClick={handleStatusToggle}>
-                {/* Visual toggle switch */}
-                <div className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                  formData.status ? 'bg-green-600' : 'bg-gray-200'
-                }`}>
-                  <span
-                    className={`inline-block h-6 w-6 transform rounded-full bg-white transition ${
-                      formData.status ? 'translate-x-7' : 'translate-x-1'
-                    }`}
-                  />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-primary/5 rounded-xl p-6 border border-primary/20">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <h3 className="text-lg font-semibold text-gray-800">Publication Status</h3>
+                <p className="text-xs text-gray-600">
+                  Visible to customers
+                </p>
+              </div>
+              <div className="flex items-center">
+                <div className="flex items-center cursor-pointer" onClick={handleStatusToggle}>
+                  <div className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${formData.status ? 'bg-primary' : 'bg-gray-200'
+                    }`}>
+                    <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition ${formData.status ? 'translate-x-6' : 'translate-x-1'
+                      }`} />
+                  </div>
                 </div>
-                <span className={`ml-3 text-sm font-medium ${
-                  formData.status ? 'text-green-700' : 'text-gray-500'
-                }`}>
-                  {formData.status ? 'Published' : 'Draft'}
-                </span>
               </div>
             </div>
           </div>
-          <div className="mt-3 text-xs text-gray-500">
-            {formData.status 
-              ? 'This product will be visible to customers on your store' 
-              : 'This product will be saved as a draft and hidden from customers'
-            }
+
+          <div className="bg-secondary/5 rounded-xl p-6 border border-secondary/20">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <h3 className="text-lg font-semibold text-gray-800">Featured Product</h3>
+                <p className="text-xs text-gray-600">
+                  Show in featured section
+                </p>
+              </div>
+              <div className="flex items-center">
+                <div className="flex items-center cursor-pointer" onClick={handleFeaturedToggle}>
+                  <div className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${formData.featured ? 'bg-secondary' : 'bg-gray-200'
+                    }`}>
+                    <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition ${formData.featured ? 'translate-x-6' : 'translate-x-1'
+                      }`} />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Price Summary Card */}
         {(formData.price > 0 || formData.discount > 0) && (
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+          <div className="bg-primary/5 rounded-xl p-6 border border-primary/20">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Price Summary</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
@@ -197,10 +209,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       -${((formData.price * formData.discount) / 100)}
                     </span>
                   </div>
-                  <div className="border-t border-blue-300 pt-2">
+                  <div className="border-t border-primary/20 pt-2">
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-semibold text-gray-800">Final Price:</span>
-                      <span className="text-lg font-bold text-green-600">${netPrice}</span>
+                      <span className="text-lg font-bold text-primary">${netPrice}</span>
                     </div>
                   </div>
                 </>

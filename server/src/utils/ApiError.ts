@@ -8,20 +8,22 @@ class ApiError extends Error {
 }
 
 const apiErrorMiddleware = (
-    err: ApiError,
+    err: any,
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
+    let statusCode = err.statusCode || 500;
+    let message = err.message || "Internal Server Error";
 
-    err.message = err.message || "Internal Server Error";
-    err.statusCode = err.statusCode || 500;
+    if (err.name === "CastError") {
+        statusCode = 400;
+        message = "Invalid ID";
+    }
 
-    if (err.name === "CastError") err.message = "Invalid ID";
-
-    return res.status(err.statusCode).json({
+    return res.status(statusCode).json({
         success: false,
-        message: err.message,
+        message,
     });
 }
 

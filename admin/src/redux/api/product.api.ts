@@ -15,12 +15,34 @@ import {
 } from "../../types/api-types";
 
 export const productApi = createApi({
-    reducerPath: 'productAPI',
+    reducerPath: 'productApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: import.meta.env.VITE_SERVER_URL 
-            ? `${import.meta.env.VITE_SERVER_URL}/api/v1/products`
-            : `/api/v1/products`,
+        baseUrl: import.meta.env.VITE_SERVER_URL
+            ? `${import.meta.env.VITE_SERVER_URL}/products`
+            : `/products`,
         credentials: 'include',
+                prepareHeaders: async (headers) => {
+            const token = localStorage.getItem('admin_token');
+            const authPrefix = 'Bearer ';
+
+            try {
+                const { auth } = await import('../../firebaseConfig');
+                const user = auth.currentUser;
+                
+                if (user) {
+                    const freshToken = await user.getIdToken();
+                    headers.set('Authorization', authPrefix + freshToken);
+                } else if (token) {
+                    headers.set('Authorization', authPrefix + token);
+                }
+            } catch (error) {
+                if (token) {
+                    headers.set('Authorization', authPrefix + token);
+                }
+            }
+            
+            return headers;
+        },
     }),
     tagTypes: ['Product'],
     endpoints: (builder) => ({
@@ -31,11 +53,11 @@ export const productApi = createApi({
         allProducts: builder.query<ProductResponse, ProductRequest>({
             query: ({ page, limit, sortBy, category, brand }) => {
                 let url = `all?page=${page}&limit=${limit}&includeUnpublished=true`;
-                
+
                 if (sortBy) {
                     url += `&sortBy=${JSON.stringify(sortBy)}`;
                 }
-                
+
                 if (category) {
                     url += `&category=${encodeURIComponent(category)}`;
                 }
@@ -43,7 +65,7 @@ export const productApi = createApi({
                 if (brand) {
                     url += `&brand=${encodeURIComponent(brand)}`;
                 }
-                
+
                 return url;
             },
             providesTags: ['Product'],

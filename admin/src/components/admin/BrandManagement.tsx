@@ -1,10 +1,10 @@
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { FaEdit, FaPlus, FaTrash, FaTimes, FaImage } from 'react-icons/fa';
-import { 
-    useGetAllBrandsQuery, 
-    useCreateBrandMutation, 
-    useUpdateBrandMutation, 
-    useDeleteBrandMutation 
+import {
+    useGetAllBrandsQuery,
+    useCreateBrandMutation,
+    useUpdateBrandMutation,
+    useDeleteBrandMutation
 } from '../../redux/api/brand.api';
 import { Brand, CustomError } from '../../types/api-types';
 import { notify } from '../../utils/util';
@@ -21,9 +21,9 @@ const BrandManagement: React.FC = () => {
     });
     const [imagePreview, setImagePreview] = useState<string>('');
 
-    const { data, isLoading, refetch } = useGetAllBrandsQuery({ 
-        page: currentPage, 
-        limit: 10 
+    const { data, isLoading, refetch } = useGetAllBrandsQuery({
+        page: currentPage,
+        limit: 10
     });
     const [createBrand, { isLoading: isCreating }] = useCreateBrandMutation();
     const [updateBrand, { isLoading: isUpdating }] = useUpdateBrandMutation();
@@ -47,7 +47,7 @@ const BrandManagement: React.FC = () => {
                 ...prev,
                 image: file
             }));
-            
+
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result as string);
@@ -96,23 +96,23 @@ const BrandManagement: React.FC = () => {
 
         const submitFormData = new FormData();
         submitFormData.append('name', formData.name.trim());
-        
+
         if (formData.image) {
             submitFormData.append('image', formData.image);
         }
 
         try {
             if (editingBrand) {
-                await updateBrand({ 
-                    brandId: editingBrand._id!, 
-                    formData: submitFormData 
+                await updateBrand({
+                    brandId: editingBrand._id!,
+                    formData: submitFormData
                 }).unwrap();
                 notify('Brand updated successfully', 'success');
             } else {
                 await createBrand({ formData: submitFormData }).unwrap();
                 notify('Brand created successfully', 'success');
             }
-            
+
             closeModal();
             refetch();
         } catch (error) {
@@ -142,7 +142,7 @@ const BrandManagement: React.FC = () => {
                 <h2 className="text-2xl font-bold">Brand Management</h2>
                 <button
                     onClick={() => openModal()}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
+                    className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark flex items-center gap-2"
                 >
                     <FaPlus /> Add Brand
                 </button>
@@ -163,7 +163,7 @@ const BrandManagement: React.FC = () => {
                         <div className="flex justify-center gap-2">
                             <button
                                 onClick={() => openModal(brand)}
-                                className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 flex items-center gap-1"
+                                className="bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700 flex items-center gap-1"
                             >
                                 <FaEdit size={12} /> Edit
                             </button>
@@ -222,7 +222,7 @@ const BrandManagement: React.FC = () => {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
-                                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
                                     placeholder="Enter brand name"
                                     required
                                 />
@@ -270,12 +270,12 @@ const BrandManagement: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={isCreating || isUpdating}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+                                    className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark disabled:bg-gray-400"
                                 >
-                                    {isCreating || isUpdating 
-                                        ? 'Saving...' 
-                                        : editingBrand 
-                                            ? 'Update Brand' 
+                                    {isCreating || isUpdating
+                                        ? 'Saving...'
+                                        : editingBrand
+                                            ? 'Update Brand'
                                             : 'Create Brand'
                                     }
                                 </button>

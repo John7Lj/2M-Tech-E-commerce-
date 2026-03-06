@@ -3,16 +3,36 @@ import { UserLoginRequest, UserLoginResponse, UserRegisterRequest, UserResponse 
 
 export const userApi = createApi({
     reducerPath: 'userAPI',
-   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_SERVER_URL 
-        ? `${import.meta.env.VITE_SERVER_URL}/api/v1/auth`
-        : `/api/v1/auth`,
-    credentials: 'include',
-    prepareHeaders: (headers) => {
-        headers.set('Content-Type', 'application/json');
-        return headers;
-    },
-}),
+    baseQuery: fetchBaseQuery({
+        baseUrl: import.meta.env.VITE_SERVER_URL
+            ? `${import.meta.env.VITE_SERVER_URL}/auth`
+            : `/auth`,
+        credentials: 'include',
+        prepareHeaders: async (headers) => {
+            const token = localStorage.getItem('admin_token');
+            const authPrefix = 'Bearer ';
+
+            try {
+                const { auth } = await import('../../firebaseConfig');
+                await auth.authStateReady();
+                const user = auth.currentUser;
+
+                if (user) {
+                    const freshToken = await user.getIdToken();
+                    headers.set('Authorization', authPrefix + freshToken);
+                } else if (token) {
+                    headers.set('Authorization', authPrefix + token);
+                }
+            } catch (error) {
+                if (token) {
+                    headers.set('Authorization', authPrefix + token);
+                }
+            }
+
+            headers.set('Content-Type', 'application/json');
+            return headers;
+        },
+    }),
     tagTypes: ['User'],
     endpoints: (builder) => ({
         getAllUsers: builder.query({

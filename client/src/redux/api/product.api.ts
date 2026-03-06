@@ -2,24 +2,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
     CategoriesResponse,
- 
+
     FeatureProductRequest,
     MessageResponse,
-   
+
     ProductDetailResponse,
     ProductRequest,
     ProductResponse,
     SearchProductRequest,
     SearchProductResponse,
-   
+
 } from "../../types/api-types";
 
 export const productApi = createApi({
     reducerPath: 'productAPI',
     baseQuery: fetchBaseQuery({
-        baseUrl: import.meta.env.VITE_SERVER_URL 
-            ? `${import.meta.env.VITE_SERVER_URL}/api/v1/products`
-            : `/api/v1/products`,
+        baseUrl: import.meta.env.VITE_SERVER_URL
+            ? `${import.meta.env.VITE_SERVER_URL}/products`
+            : `/products`,
         credentials: 'include',
     }),
     tagTypes: ['Product'],
@@ -31,11 +31,11 @@ export const productApi = createApi({
         allProducts: builder.query<ProductResponse, ProductRequest>({
             query: ({ page, limit, sortBy, category, brand }) => {
                 let url = `all?page=${page}&limit=${limit}`;
-                
+
                 if (sortBy) {
                     url += `&sortBy=${JSON.stringify(sortBy)}`;
                 }
-                
+
                 if (category) {
                     url += `&category=${encodeURIComponent(category)}`;
                 }
@@ -43,7 +43,7 @@ export const productApi = createApi({
                 if (brand) {
                     url += `&brand=${encodeURIComponent(brand)}`;
                 }
-                
+
                 return url;
             },
             providesTags: ['Product'],
@@ -63,13 +63,13 @@ export const productApi = createApi({
             },
             providesTags: ['Product'],
         }),
-    
+
         productDetails: builder.query<ProductDetailResponse, string>({
             query: (id) => id,
             providesTags: ['Product']
         }),
-       
-       
+
+
         getAllFeaturedProducts: builder.query<ProductResponse, string>({
             query: () => 'featured',
             providesTags: ['Product']
@@ -81,14 +81,12 @@ export const productApi = createApi({
             }),
             invalidatesTags: ['Product']
         }),
-       productsByCategory: builder.query<ProductResponse, { category: string; limit?: number }>({
-    query: ({ category, limit = 8 }) => {
-        console.log('API Query - Category:', category, 'Limit:', limit);
-        // Make sure category is properly encoded and matches the backend route
-        return `/category/${encodeURIComponent(category)}?limit=${limit}`;
-    },
-    providesTags: ['Product']
-}),
+        productsByCategory: builder.query<ProductResponse, { category: string; limit?: number }>({
+            query: ({ category, limit = 8 }) => {
+                return `/category/${encodeURIComponent(category)}?limit=${limit}`;
+            },
+            providesTags: ['Product']
+        }),
         productsByBrand: builder.query<ProductResponse, { brandId: string; limit?: number }>({
             query: ({ brandId, limit = 8 }) => `/brand/${brandId}?limit=${limit}`,
             providesTags: ['Product']

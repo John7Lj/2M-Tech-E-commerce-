@@ -85,7 +85,7 @@ const SubcategoryManagement: React.FC = () => {
     submitFormData.append('name', formData.name.trim());
     submitFormData.append('description', formData.description.trim());
     submitFormData.append('parentCategory', formData.parentCategory);
-    
+
     if (formData.image) {
       submitFormData.append('image', formData.image);
     }
@@ -124,7 +124,7 @@ const SubcategoryManagement: React.FC = () => {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-gray-600">Loading subcategories...</p>
         </div>
       </div>
@@ -141,7 +141,7 @@ const SubcategoryManagement: React.FC = () => {
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+          className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors flex items-center space-x-2"
         >
           <span>+</span>
           <span>Add Subcategory</span>
@@ -155,7 +155,7 @@ const SubcategoryManagement: React.FC = () => {
             <h2 className="text-xl font-bold mb-4">
               {editingSubcategory ? 'Edit Subcategory' : 'Add New Subcategory'}
             </h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -166,7 +166,7 @@ const SubcategoryManagement: React.FC = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   required
                 />
               </div>
@@ -179,7 +179,7 @@ const SubcategoryManagement: React.FC = () => {
                   name="parentCategory"
                   value={formData.parentCategory}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   required
                 >
                   <option value="">Select parent category</option>
@@ -199,7 +199,7 @@ const SubcategoryManagement: React.FC = () => {
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   rows={3}
                 />
               </div>
@@ -212,7 +212,7 @@ const SubcategoryManagement: React.FC = () => {
                   type="file"
                   onChange={handleImageChange}
                   accept="image/*"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
 
@@ -227,7 +227,7 @@ const SubcategoryManagement: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isCreating || isUpdating}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark disabled:opacity-50"
                 >
                   {isCreating || isUpdating ? 'Saving...' : editingSubcategory ? 'Update' : 'Create'}
                 </button>
@@ -251,7 +251,7 @@ const SubcategoryManagement: React.FC = () => {
               <p>No subcategories found</p>
               <button
                 onClick={() => setShowForm(true)}
-                className="text-blue-600 hover:text-blue-700 mt-2"
+                className="text-primary hover:text-primary-dark mt-2"
               >
                 Create your first subcategory
               </button>
@@ -279,21 +279,20 @@ const SubcategoryManagement: React.FC = () => {
                 </div>
 
                 <div className="flex items-center space-x-3">
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    subcategory.isActive 
-                      ? 'bg-green-100 text-green-800' 
+                  <span className={`px-2 py-1 rounded-full text-xs ${subcategory.isActive
+                      ? 'bg-primary/10 text-primary'
                       : 'bg-red-100 text-red-800'
-                  }`}>
+                    }`}>
                     {subcategory.isActive ? 'Active' : 'Inactive'}
                   </span>
-                  
+
                   <button
                     onClick={() => handleEdit(subcategory)}
-                    className="text-blue-600 hover:text-blue-800 text-sm"
+                    className="text-primary hover:text-primary-dark text-sm"
                   >
                     Edit
                   </button>
-                  
+
                   <button
                     onClick={() => handleDelete(subcategory._id, subcategory.name)}
                     disabled={isDeleting}

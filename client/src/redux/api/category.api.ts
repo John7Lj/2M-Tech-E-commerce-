@@ -29,7 +29,7 @@ interface CategoryResponse {
 export const categoryApi = createApi({
   reducerPath: 'categoryApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_SERVER_URL}/api/v1/categories`,
+    baseUrl: `${import.meta.env.VITE_SERVER_URL}/categories`,
     credentials: 'include',
   }),
   tagTypes: ['Category'],

@@ -15,8 +15,8 @@ const AuthPage: React.FC = () => {
         {/* Left Side - Lottie Animation */}
         <div className="hidden md:flex flex-col md:w-1/2 items-center justify-center bg-gradient-to-br from-gray-300 to-gray-400">
           <div className="w-full max-w-md px-8">
-            <Lottie 
-              animationData={ecommerceAnimation} 
+            <Lottie
+              animationData={ecommerceAnimation}
               loop={true}
               autoplay={true}
               style={{ width: '100%', height: 'auto' }}
@@ -31,12 +31,12 @@ const AuthPage: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Right Side - Login Form */}
         <div className="w-full md:w-1/2 p-8 lg:p-12">
           {/* Logo Section */}
           <div className="text-center mb-8">
-            <motion.h1 
+            <motion.h1
               className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -44,7 +44,7 @@ const AuthPage: React.FC = () => {
             >
               {isLoading ? 'Loading...' : constants.companyName}
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="text-gray-600 text-sm lg:text-base"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -62,18 +62,18 @@ const AuthPage: React.FC = () => {
           >
             <Login />
           </motion.div>
-          
+
           {/* Admin Notice */}
           <div className="mt-8 text-center">
-            <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
+            <div className="bg-primary/5 rounded-lg p-6 border border-primary/20">
               <div className="flex items-center justify-center mb-2">
-                <svg className="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-primary mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
-                <h3 className="text-sm font-semibold text-blue-800">Admin Access Required</h3>
+                <h3 className="text-sm font-semibold text-primary">Admin Access Required</h3>
               </div>
-              <p className="text-blue-700 text-xs leading-relaxed">
-                This portal is restricted to authorized administrators only. 
+              <p className="text-gray-600 text-xs leading-relaxed">
+                This portal is restricted to authorized administrators only.
                 If you need access, please contact your system administrator.
               </p>
             </div>
@@ -83,11 +83,11 @@ const AuthPage: React.FC = () => {
           <div className="mt-4 text-center">
             <p className="text-xs text-gray-500">
               By signing in, you agree to our{' '}
-              <a href="/pages/term" className="text-blue-600 hover:underline">
+              <a href="/pages/term" className="text-primary hover:underline">
                 Terms of Service
               </a>{' '}
               and{' '}
-              <a href="/pages/privacy-policy" className="text-blue-600 hover:underline">
+              <a href="/pages/privacy-policy" className="text-primary hover:underline">
                 Privacy Policy
               </a>
             </p>

@@ -39,17 +39,18 @@ const UserSchema: Schema = new Schema({
     },
     role: {
         type: String,
-        required: [true, 'Please enter role'],
+        enum: ['user', 'admin'],
         default: 'user'
     },
     gender: {
         type: String,
-        required: [true, 'Please enter gender']
+        required: [true, 'Please enter gender'],
+        enum: ['male', 'female']
     },
     dob: {
         type: Date,
-        required: [true, 'Please enter date of birth'] // Fixed typo: was 'cvbirth'
+        required: [true, 'Please enter date of birth']
     }
-});
+}, { timestamps: true });
 
 export default mongoose.model<IUser>('User', UserSchema); // Fixed: was 'mongoo se'

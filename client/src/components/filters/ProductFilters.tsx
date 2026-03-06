@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, ChevronDown, Star, Settings } from 'lucide-react';
+import { ChevronDown, Star, Package } from 'lucide-react';
 import GearPriceControl from './GearPriceControl';
 
 export interface FilterState {
@@ -83,9 +83,9 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
   const handleCustomPriceChange = () => {
     const minVal = Math.max(0, parseInt(minPriceInput) || 0);
     const maxVal = Math.max(minVal, parseInt(maxPriceInput) || maxPrice);
-    
-    updateFilters({ 
-      priceRange: [minVal, maxVal] 
+
+    updateFilters({
+      priceRange: [minVal, maxVal]
     });
   };
 
@@ -98,7 +98,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
     updateFilters({ priceRange: [min, max] });
   };
 
-  const hasActiveFilters = 
+  const hasActiveFilters =
     filters.selectedBrands.length > 0 ||
     filters.selectedCategories.length > 0 ||
     filters.selectedSubcategories.length > 0 ||
@@ -117,33 +117,33 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
   ];
 
   return (
-    <div className={`bg-white rounded-xl shadow-sm border border-gray-100 ${className}`}>
+    <div className={`bg-white dark:bg-secondary-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-500 ${className}`}>
       {/* Filter Header */}
-      <div className="p-4 border-b border-gray-100">
+      <div className="p-5 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+          <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">Filters</h3>
           {hasActiveFilters && (
             <button
               onClick={clearAllFilters}
-              className="text-sm text-red-500 hover:text-red-700 font-medium transition-colors"
+              className="text-xs text-primary hover:text-primary-dark font-black uppercase tracking-widest transition-all"
             >
-              Clear All
+              Reset
             </button>
           )}
         </div>
       </div>
 
-      <div className="p-4 space-y-6">
+      <div className="p-5 space-y-8">
         {/* Sort By */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-3">
             Sort By
           </label>
           <div className="relative">
             <select
               value={filters.sortBy}
               onChange={(e) => updateFilters({ sortBy: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-gray-700"
+              className="w-full px-4 py-3 border border-gray-100 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 text-sm font-bold transition-all"
             >
               <option value="newest">Newest First</option>
               <option value="price-low">Price: Low to High</option>
@@ -158,88 +158,63 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
 
         {/* Quick Filters */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Quick Filters
+          <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">
+            Preferences
           </label>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label className="flex items-center space-x-3 cursor-pointer group">
               <input
                 type="checkbox"
                 checked={filters.showFeaturedOnly}
                 onChange={(e) => updateFilters({ showFeaturedOnly: e.target.checked })}
-                className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                className="w-5 h-5 text-primary border-gray-200 dark:border-gray-700 rounded-lg focus:ring-primary dark:bg-gray-800 transition-all"
               />
               <div className="flex items-center space-x-2">
-                <Star className="w-4 h-4 text-yellow-500" />
-                <span className="text-sm text-gray-700 group-hover:text-gray-900">Featured Products</span>
+                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                <span className="text-sm font-bold text-gray-700 dark:text-gray-300 group-hover:text-primary transition-colors">Featured Only</span>
               </div>
             </label>
-            
+
             <label className="flex items-center space-x-3 cursor-pointer group">
               <input
                 type="checkbox"
                 checked={filters.hasDiscount}
                 onChange={(e) => updateFilters({ hasDiscount: e.target.checked })}
-                className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                className="w-5 h-5 text-primary border-gray-200 dark:border-gray-700 rounded-lg focus:ring-primary dark:bg-gray-800 transition-all"
               />
-              <span className="text-sm text-gray-700 group-hover:text-gray-900">On Sale</span>
+              <span className="text-sm font-bold text-gray-700 dark:text-gray-300 group-hover:text-primary transition-colors">On Sale</span>
             </label>
           </div>
         </div>
 
-        {/* Enhanced Price Range */}
+        {/* Price Range */}
         <div>
-          <div className="flex items-center justify-between mb-3">
-            <label className="text-sm font-medium text-gray-700">
-              Price Range
+          <div className="flex items-center justify-between mb-4">
+            <label className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">
+              Price range
             </label>
-            <div className="flex space-x-1">
+            <div className="flex p-1 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800">
               <button
                 onClick={() => setPriceControlMode('preset')}
-                className={`p-2 rounded-lg transition-colors ${
-                  priceControlMode === 'preset' 
-                    ? 'bg-purple-100 text-purple-700' 
-                    : 'text-gray-400 hover:text-purple-600 hover:bg-purple-50'
-                }`}
-                title="Preset ranges"
+                className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${priceControlMode === 'preset' ? 'bg-white dark:bg-gray-800 text-primary shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
               >
-                <span className="text-xs">Preset</span>
+                Preset
               </button>
               <button
                 onClick={() => setPriceControlMode('gear')}
-                className={`p-2 rounded-lg transition-colors ${
-                  priceControlMode === 'gear' 
-                    ? 'bg-purple-100 text-purple-700' 
-                    : 'text-gray-400 hover:text-purple-600 hover:bg-purple-50'
-                }`}
-                title="Gear controls"
+                className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${priceControlMode === 'gear' ? 'bg-white dark:bg-gray-800 text-primary shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
               >
-                <Settings className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setPriceControlMode('manual')}
-                className={`p-2 rounded-lg transition-colors ${
-                  priceControlMode === 'manual' 
-                    ? 'bg-purple-100 text-purple-700' 
-                    : 'text-gray-400 hover:text-purple-600 hover:bg-purple-50'
-                }`}
-                title="Manual input"
-              >
-                <span className="text-xs">Manual</span>
+                Gear
               </button>
             </div>
           </div>
 
-          {/* Current Price Display */}
-          <div className="mb-3 p-3 bg-gray-50 rounded-lg">
-            <div className="text-sm text-gray-600 text-center">
-              <span className="font-medium text-purple-600">
-                LE {filters.priceRange[0].toLocaleString()} - LE {filters.priceRange[1].toLocaleString()}
-              </span>
-            </div>
+          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 text-center">
+            <span className="text-sm font-black text-primary tracking-tight">
+              LE {filters.priceRange[0].toLocaleString()} — LE {filters.priceRange[1].toLocaleString()}
+            </span>
           </div>
 
-          {/* Price Control Modes */}
           {priceControlMode === 'gear' && (
             <GearPriceControl
               minValue={0}
@@ -247,66 +222,61 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
               currentMin={filters.priceRange[0]}
               currentMax={filters.priceRange[1]}
               onChange={handleGearPriceChange}
-              className="mb-4"
+              className="mb-6"
             />
           )}
 
-          {priceControlMode === 'manual' && (
-            /* Custom Price Input */
-            <div className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Min Price (LE)</label>
-                  <input
-                    type="number"
-                    value={minPriceInput}
-                    onChange={(e) => setMinPriceInput(e.target.value)}
-                    onBlur={handleCustomPriceChange}
-                    onKeyPress={(e) => e.key === 'Enter' && handleCustomPriceChange()}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="0"
-                    min="0"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Max Price (LE)</label>
-                  <input
-                    type="number"
-                    value={maxPriceInput}
-                    onChange={(e) => setMaxPriceInput(e.target.value)}
-                    onBlur={handleCustomPriceChange}
-                    onKeyPress={(e) => e.key === 'Enter' && handleCustomPriceChange()}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder={maxPrice.toString()}
-                    min="0"
-                  />
-                </div>
-              </div>
-              <button
-                onClick={handleCustomPriceChange}
-                className="w-full text-sm bg-purple-100 text-purple-700 py-2.5 rounded-lg hover:bg-purple-200 transition-colors font-medium"
-              >
-                Apply Price Range
-              </button>
-            </div>
-          )}
-
           {priceControlMode === 'preset' && (
-            /* Price Presets */
             <div className="space-y-2">
               {pricePresets.map((preset, index) => (
                 <button
                   key={index}
                   onClick={() => handlePricePreset(preset.min, preset.max)}
-                  className={`w-full text-left px-3 py-2.5 text-sm rounded-lg transition-colors ${
-                    filters.priceRange[0] === preset.min && filters.priceRange[1] === preset.max
-                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                  }`}
+                  className={`w-full text-left px-4 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${filters.priceRange[0] === preset.min && filters.priceRange[1] === preset.max
+                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                    : 'bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-primary transition-all'
+                    }`}
                 >
                   {preset.label}
                 </button>
               ))}
+              <button
+                onClick={() => setPriceControlMode('manual')}
+                className="w-full py-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-t border-dashed border-gray-200 dark:border-gray-700 mt-2 hover:text-primary transition-colors"
+              >
+                Custom Range
+              </button>
+            </div>
+          )}
+
+          {priceControlMode === 'manual' && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Min</span>
+                  <input
+                    type="number"
+                    value={minPriceInput}
+                    onChange={(e) => setMinPriceInput(e.target.value)}
+                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl text-sm font-bold dark:text-white focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Max</span>
+                  <input
+                    type="number"
+                    value={maxPriceInput}
+                    onChange={(e) => setMaxPriceInput(e.target.value)}
+                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl text-sm font-bold dark:text-white focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+              </div>
+              <button
+                onClick={handleCustomPriceChange}
+                className="w-full py-3 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+              >
+                Apply Custom
+              </button>
             </div>
           )}
         </div>
@@ -314,12 +284,12 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
         {/* Brands */}
         {brands.length > 0 && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Brands ({brands.length})
+            <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">
+              Featured Brands
             </label>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+            <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
               {brands.map(brand => (
-                <label key={brand._id} className="flex items-center space-x-3 cursor-pointer group p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                <label key={brand._id} className="flex items-center space-x-3 cursor-pointer group p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900 transition-all">
                   <input
                     type="checkbox"
                     checked={filters.selectedBrands.includes(brand._id)}
@@ -329,82 +299,64 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                         : filters.selectedBrands.filter(id => id !== brand._id);
                       updateFilters({ selectedBrands: newBrands });
                     }}
-                    className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                    className="w-5 h-5 text-primary border-gray-200 dark:border-gray-700 rounded-lg focus:ring-primary dark:bg-gray-800 transition-all"
                   />
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
-                    {brand.image && (
-                      <img
-                        src={brand.image}
-                        alt={brand.name}
-                        className="w-6 h-6 rounded object-cover flex-shrink-0"
-                      />
-                    )}
-                    <span className="text-sm text-gray-700 group-hover:text-gray-900 truncate">
+                    <div className="w-8 h-8 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 overflow-hidden flex-shrink-0 flex items-center justify-center p-1">
+                      {brand.image ? (
+                        <img src={brand.image} alt={brand.name} className="max-w-full max-h-full object-contain" />
+                      ) : (
+                        <Package className="w-4 h-4 text-gray-300" />
+                      )}
+                    </div>
+                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300 group-hover:text-primary transition-colors truncate">
                       {brand.name}
                     </span>
                   </div>
                 </label>
               ))}
             </div>
-            {filters.selectedBrands.length > 0 && (
-              <button
-                onClick={() => updateFilters({ selectedBrands: [] })}
-                className="text-xs text-gray-500 hover:text-red-500 mt-2 flex items-center space-x-1 transition-colors"
-              >
-                <X className="w-3 h-3" />
-                <span>Clear brands ({filters.selectedBrands.length})</span>
-              </button>
-            )}
           </div>
         )}
 
         {/* Categories */}
         {showCategories && categories.length > 0 && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Categories ({categories.length})
+            <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">
+              Collections
             </label>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
+            <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
               {categories.map(category => (
-                <label key={category._id} className="flex items-center space-x-3 cursor-pointer group p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                <label key={category._id} className="flex items-center space-x-3 cursor-pointer group p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900 transition-all">
                   <input
                     type="checkbox"
-checked={filters.selectedCategories.includes(category.name)}
+                    checked={filters.selectedCategories.includes(category.name)}
                     onChange={(e) => {
                       const newCategories = e.target.checked
-                      ? [...filters.selectedCategories, category.name]
-                      : filters.selectedCategories.filter(name => name !== category.name);
+                        ? [...filters.selectedCategories, category.name]
+                        : filters.selectedCategories.filter(name => name !== category.name);
                       updateFilters({ selectedCategories: newCategories });
                     }}
-                    className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                    className="w-5 h-5 text-primary border-gray-200 dark:border-gray-700 rounded-lg focus:ring-primary dark:bg-gray-800 transition-all"
                   />
-                  <span className="text-sm text-gray-700 group-hover:text-gray-900">
+                  <span className="text-sm font-bold text-gray-700 dark:text-gray-300 group-hover:text-primary transition-colors">
                     {category.name}
                   </span>
                 </label>
               ))}
             </div>
-            {filters.selectedCategories.length > 0 && (
-              <button
-                onClick={() => updateFilters({ selectedCategories: [] })}
-                className="text-xs text-gray-500 hover:text-red-500 mt-2 flex items-center space-x-1 transition-colors"
-              >
-                <X className="w-3 h-3" />
-                <span>Clear categories ({filters.selectedCategories.length})</span>
-              </button>
-            )}
           </div>
         )}
 
         {/* Subcategories */}
         {showSubcategories && subcategories.length > 0 && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Subcategories ({subcategories.length})
+            <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">
+              Subcategories
             </label>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
+            <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
               {subcategories.map(subcategory => (
-                <label key={subcategory._id} className="flex items-center space-x-3 cursor-pointer group p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                <label key={subcategory._id} className="flex items-center space-x-3 cursor-pointer group p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900 transition-all">
                   <input
                     type="checkbox"
                     checked={filters.selectedSubcategories.includes(subcategory._id)}
@@ -414,23 +366,14 @@ checked={filters.selectedCategories.includes(category.name)}
                         : filters.selectedSubcategories.filter(id => id !== subcategory._id);
                       updateFilters({ selectedSubcategories: newSubcategories });
                     }}
-                    className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                    className="w-5 h-5 text-primary border-gray-200 dark:border-gray-700 rounded-lg focus:ring-primary dark:bg-gray-800 transition-all"
                   />
-                  <span className="text-sm text-gray-700 group-hover:text-gray-900">
+                  <span className="text-sm font-bold text-gray-700 dark:text-gray-300 group-hover:text-primary transition-colors">
                     {subcategory.name}
                   </span>
                 </label>
               ))}
             </div>
-            {filters.selectedSubcategories.length > 0 && (
-              <button
-                onClick={() => updateFilters({ selectedSubcategories: [] })}
-                className="text-xs text-gray-500 hover:text-red-500 mt-2 flex items-center space-x-1 transition-colors"
-              >
-                <X className="w-3 h-3" />
-                <span>Clear subcategories ({filters.selectedSubcategories.length})</span>
-              </button>
-            )}
           </div>
         )}
       </div>

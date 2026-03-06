@@ -35,7 +35,6 @@ const SignupPage: React.FC = () => {
     try {
       const idToken = await userCredential.user.getIdToken();
       const response = await signupUser({ idToken, name, gender, dob }).unwrap();
-      console.log('response', response);
 
       if (response.user) {
         dispatch(userExists(response.user));
@@ -52,17 +51,17 @@ const SignupPage: React.FC = () => {
   const handleGoogleSignup = async () => {
     setIsLoading(true);
     const provider = new GoogleAuthProvider();
-    
+
     try {
       // Add additional scopes if needed
       provider.addScope('email');
       provider.addScope('profile');
-      
+
       // Force account selection
       provider.setCustomParameters({
         prompt: 'select_account'
       });
-      
+
       const userCredential = await signInWithPopup(auth, provider);
       setUserCredential(userCredential);
       setIsLoading(false);
@@ -71,7 +70,7 @@ const SignupPage: React.FC = () => {
       if (error instanceof Error) {
         const firebaseError = error as any;
         let errorMessage = 'Google sign-up failed';
-        
+
         switch (firebaseError.code) {
           case 'auth/popup-closed-by-user':
             errorMessage = 'Sign-up was cancelled';
@@ -88,7 +87,7 @@ const SignupPage: React.FC = () => {
           default:
             errorMessage = error.message || 'Google sign-up failed';
         }
-        
+
         notify(errorMessage, 'error');
       } else {
         notify('An unknown error occurred', 'error');
@@ -111,7 +110,6 @@ const SignupPage: React.FC = () => {
       setUserCredential(userCredential);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        console.log('error', error);
         notify(error.message, 'error');
       } else {
         notify('An unknown error occurred', 'error');
@@ -136,9 +134,9 @@ const SignupPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="w-full max-w-md bg-white rounded-lg p-6">
-        <h5 className="text-xl font-bold text-center mb-8">Sign Up</h5>
-        
+      <div className="w-full max-w-md bg-white dark:bg-gray-950 rounded-2xl p-8 border border-gray-100 dark:border-gray-800 shadow-2xl transition-colors duration-500">
+        <h5 className="text-2xl font-black text-center mb-10 text-gray-900 dark:text-white uppercase tracking-tighter">Sign Up</h5>
+
         {!userCredential && (
           <>
             {/* PRIORITIZED: Google Sign-Up (moved to top) */}
@@ -146,11 +144,11 @@ const SignupPage: React.FC = () => {
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 1 }}>
                 <button
                   disabled={isLoading}
-                  className={`flex items-center justify-center text-gray-700 font-bold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 shadow-md bg-white hover:bg-gray-100 gap-2 w-full border border-gray-300 transition-colors ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                  className={`flex items-center justify-center text-gray-700 dark:text-gray-200 font-bold py-4 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 dark:focus:ring-gray-700 shadow-md bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 gap-3 w-full border border-gray-200 dark:border-gray-800 transition-all ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                   onClick={handleGoogleSignup}
                 >
                   <FcGoogle className='text-2xl' />
-                  {isLoading ? 'Setting up...' : 'Continue with Google'}
+                  <span className="text-[10px] font-black uppercase tracking-widest">{isLoading ? 'Setting up...' : 'Continue with Google'}</span>
                 </button>
               </motion.div>
             </div>
@@ -162,41 +160,41 @@ const SignupPage: React.FC = () => {
             </div>
 
             {/* Traditional Email/Password Signup */}
-            <motion.div whileHover={{ y: -2 }} className="mb-4">
-              <label className="block text-sm font-bold mb-2" htmlFor="email">Email</label>
+            <motion.div whileHover={{ y: -2 }} className="mb-6">
+              <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2 ml-1" htmlFor="email">Email Address</label>
               <input
                 type="email"
                 id="email"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline transition-shadow"
+                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl py-4 px-4 text-gray-900 dark:text-white leading-tight focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="name@example.com"
                 disabled={isLoading}
               />
             </motion.div>
 
-            <motion.div whileHover={{ y: -2 }} className="mb-4">
-              <label className="block text-sm font-bold mb-2" htmlFor="password">Password</label>
+            <motion.div whileHover={{ y: -2 }} className="mb-6">
+              <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2 ml-1" htmlFor="password">Password</label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 id="password"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline transition-shadow"
+                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl py-4 px-4 text-gray-900 dark:text-white leading-tight focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 disabled={isLoading}
               />
             </motion.div>
 
-            <motion.div whileHover={{ y: -2 }} className="mb-4">
-              <label className="block text-sm font-bold mb-2" htmlFor="confirmPassword">Confirm Password</label>
+            <motion.div whileHover={{ y: -2 }} className="mb-6">
+              <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2 ml-1" htmlFor="confirmPassword">Confirm Password</label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 id="confirmPassword"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline transition-shadow"
+                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl py-4 px-4 text-gray-900 dark:text-white leading-tight focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your password"
+                placeholder="••••••••"
                 disabled={isLoading}
               />
             </motion.div>
@@ -216,7 +214,7 @@ const SignupPage: React.FC = () => {
 
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 1 }}>
               <button
-                className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-colors ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`bg-primary hover:bg-primary-dark text-white font-black uppercase tracking-widest text-[10px] py-4 px-4 rounded-2xl focus:outline-none shadow-xl shadow-primary/20 w-full transition-all ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 type="button"
                 onClick={handleInitialSignUp}
                 disabled={isLoading}
@@ -229,9 +227,10 @@ const SignupPage: React.FC = () => {
 
         {userCredential && (
           <>
-            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-800">
-                Great! Now let's complete your profile:
+            <div className="mb-6 p-5 bg-primary/5 border border-primary/20 rounded-2xl flex items-center space-x-3">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <p className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">
+                Final Step: Complete your profile
               </p>
             </div>
 
@@ -278,12 +277,12 @@ const SignupPage: React.FC = () => {
 
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 1 }}>
               <button
-                className={`bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-colors ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`bg-primary hover:bg-primary-dark text-white font-black uppercase tracking-widest text-[10px] py-4 px-4 rounded-2xl focus:outline-none shadow-xl shadow-primary/20 w-full transition-all ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 type="button"
                 onClick={handleCompleteSignup}
                 disabled={isLoading}
               >
-                {isLoading ? 'Completing Signup...' : 'Complete Sign Up'}
+                {isLoading ? 'Processing...' : 'Complete Account Setup →'}
               </button>
             </motion.div>
           </>

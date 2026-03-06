@@ -17,7 +17,7 @@ const ProfessionalPagination: React.FC<{
   const getVisiblePages = () => {
     const pages = [];
     const showPages = 5; // Number of page buttons to show
-    
+
     if (totalPages <= showPages) {
       // Show all pages if total pages is small
       for (let i = 1; i <= totalPages; i++) {
@@ -27,30 +27,30 @@ const ProfessionalPagination: React.FC<{
       // Calculate range around current page
       let start = Math.max(1, currentPage - Math.floor(showPages / 2));
       let end = Math.min(totalPages, start + showPages - 1);
-      
+
       // Adjust start if we're near the end
       if (end - start + 1 < showPages) {
         start = Math.max(1, end - showPages + 1);
       }
-      
+
       // Add first page and ellipsis if needed
       if (start > 1) {
         pages.push(1);
         if (start > 2) pages.push('...');
       }
-      
+
       // Add visible pages
       for (let i = start; i <= end; i++) {
         pages.push(i);
       }
-      
+
       // Add ellipsis and last page if needed
       if (end < totalPages) {
         if (end < totalPages - 1) pages.push('...');
         pages.push(totalPages);
       }
     }
-    
+
     return pages;
   };
 
@@ -62,7 +62,7 @@ const ProfessionalPagination: React.FC<{
       <div className="text-sm text-gray-600 order-2 sm:order-1">
         Showing page {currentPage} of {totalPages} ({totalPages * 20} total items)
       </div>
-      
+
       {/* Pagination Controls */}
       <div className="flex items-center gap-1 order-1 sm:order-2">
         {/* Previous Button */}
@@ -73,7 +73,7 @@ const ProfessionalPagination: React.FC<{
         >
           <FaChevronLeft size={14} />
         </button>
-        
+
         {/* Page Numbers */}
         <div className="flex items-center gap-1 mx-2">
           {visiblePages.map((page, index) => (
@@ -83,10 +83,10 @@ const ProfessionalPagination: React.FC<{
               disabled={page === '...'}
               className={`
                 flex items-center justify-center min-w-[40px] h-10 px-3 rounded-lg font-medium transition-all duration-200
-                ${page === currentPage 
-                  ? 'bg-blue-600 text-white shadow-md' 
-                  : page === '...' 
-                    ? 'text-gray-400 cursor-default' 
+                ${page === currentPage
+                  ? 'bg-primary text-white shadow-md'
+                  : page === '...'
+                    ? 'text-gray-400 cursor-default'
                     : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400'
                 }
               `}
@@ -95,7 +95,7 @@ const ProfessionalPagination: React.FC<{
             </button>
           ))}
         </div>
-        
+
         {/* Next Button */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
@@ -105,7 +105,7 @@ const ProfessionalPagination: React.FC<{
           <FaChevronRight size={14} />
         </button>
       </div>
-      
+
       {/* Quick Jump (Desktop Only) */}
       <div className="hidden lg:flex items-center gap-2 text-sm order-3">
         <span className="text-gray-600">Go to:</span>
@@ -135,7 +135,7 @@ const AdminProducts: React.FC = () => {
   const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }>({ id: '', desc: false });
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  
+
   // Use search query when searching, otherwise use regular products query
   const searchQuery = useSearchProductsQuery({
     search: searchTerm,
@@ -147,10 +147,10 @@ const AdminProducts: React.FC = () => {
     skip: !isSearching
   });
 
-  const productsQuery = useAllProductsQuery({ 
-    page, 
-    limit, 
-    sortBy 
+  const productsQuery = useAllProductsQuery({
+    page,
+    limit,
+    sortBy
   }, {
     skip: isSearching
   });
@@ -214,9 +214,9 @@ const AdminProducts: React.FC = () => {
           <div className="flex space-x-1">
             {value && value.length > 0 ? (
               <>
-                <img 
-                  src={value[0]} 
-                  alt={`${row.original.name} - Main`} 
+                <img
+                  src={value[0]}
+                  alt={`${row.original.name} - Main`}
                   className="w-12 h-12 object-cover rounded border"
                 />
                 {value.length > 1 && (
@@ -234,31 +234,30 @@ const AdminProducts: React.FC = () => {
         ),
       },
       { Header: 'Product', accessor: 'name' },
-      { 
-  Header: 'Categories', 
-  accessor: 'categories',
-  Cell: ({ value }: { value: Array<{_id: string, name: string} | string> }) => (
-    <span className="text-sm">
-      {value && value.length > 0 
-        ? value.map(category => 
-            typeof category === 'string' ? category : category.name
-          ).join(', ') 
-        : 'No categories'
-      }
-    </span>
-  )
-},
+      {
+        Header: 'Categories',
+        accessor: 'categories',
+        Cell: ({ value }: { value: Array<{ _id: string, name: string } | string> }) => (
+          <span className="text-sm">
+            {value && value.length > 0
+              ? value.map(category =>
+                typeof category === 'string' ? category : category.name
+              ).join(', ')
+              : 'No categories'
+            }
+          </span>
+        )
+      },
       { Header: 'Stock', accessor: 'stock' },
       { Header: 'Price', accessor: 'price' },
       {
         Header: 'Status',
         accessor: 'status',
         Cell: ({ value }: { value: boolean }) => (
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            value 
-              ? 'bg-green-100 text-green-800' 
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${value
+              ? 'bg-primary/10 text-primary'
               : 'bg-red-100 text-red-800'
-          }`}>
+            }`}>
             {value ? 'Published' : 'Unpublished'}
           </span>
         ),
@@ -268,9 +267,9 @@ const AdminProducts: React.FC = () => {
         Cell: ({ row }: { row: Row<Product> }) => (
           <button
             onClick={() => navigate(`/admin/products/${row.original._id}`)}
-            className="text-blue-600 hover:text-blue-800 flex items-center transition-colors duration-200"
+            className="text-primary hover:text-primary-dark flex items-center transition-colors duration-200"
           >
-            <FaEdit className="mr-2" /> 
+            <FaEdit className="mr-2" />
             <span className="hidden sm:inline">Manage</span>
           </button>
         ),
@@ -289,7 +288,7 @@ const AdminProducts: React.FC = () => {
 
   const handleSort = (columnId: string) => {
     if (isSearching) return; // Disable sorting when searching
-    
+
     setSortBy((prevSortBy) => {
       if (prevSortBy.id === columnId) {
         return { id: columnId, desc: !prevSortBy.desc };
@@ -316,7 +315,7 @@ const AdminProducts: React.FC = () => {
       totalPhotos: product.photos?.length || 0,
       categories: product.categories?.join(', ') || '',
     }));
-    
+
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
@@ -339,7 +338,7 @@ const AdminProducts: React.FC = () => {
         <p className="text-red-500 mb-4">Failed to load products. Please try again.</p>
         <button
           onClick={handleRetry}
-          className="flex items-center justify-center text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 mx-auto"
+          className="flex items-center justify-center text-white bg-primary px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors duration-200 mx-auto"
         >
           Retry
         </button>
@@ -415,7 +414,7 @@ const AdminProducts: React.FC = () => {
         <div className="text-center text-gray-500 py-12">
           <div className="text-4xl mb-4">📦</div>
           <p>
-            {isSearching 
+            {isSearching
               ? `No products found for "${searchTerm}"`
               : "No products available."
             }
@@ -448,10 +447,9 @@ const AdminProducts: React.FC = () => {
                           <th
                             key={columnIndex}
                             {...headerProps}
-                            className={`p-4 border-b border-gray-200 ${canSort ? 'cursor-pointer' : ''} font-semibold text-gray-900 ${
-                              (column as any).isSorted ? 'bg-blue-50' : ''
-                            }`}
-                            onClick={() => 
+                            className={`p-4 border-b border-gray-200 ${canSort ? 'cursor-pointer' : ''} font-semibold text-gray-900 ${(column as any).isSorted ? 'bg-blue-50' : ''
+                              }`}
+                            onClick={() =>
                               canSort && handleSort(column.id)
                             }
                           >
@@ -506,9 +504,9 @@ const AdminProducts: React.FC = () => {
                     <div className="flex-shrink-0">
                       {product.photos && product.photos.length > 0 ? (
                         <div className="relative">
-                          <img 
-                            src={product.photos[0]} 
-                            alt={product.name} 
+                          <img
+                            src={product.photos[0]}
+                            alt={product.name}
                             className="w-16 h-16 object-cover rounded-lg border"
                           />
                           {product.photos.length > 1 && (
@@ -523,7 +521,7 @@ const AdminProducts: React.FC = () => {
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Product Details */}
                     <div className="flex-grow min-w-0">
                       <h3 className="font-semibold text-gray-900 truncate">{product.name}</h3>

@@ -18,15 +18,15 @@ import { useConstants } from '../hooks/useConstants';
 // Brand display component
 const BrandDisplay: React.FC<{ brand: any; isCompact?: boolean }> = ({ brand, isCompact = false }) => {
   if (!brand) return null;
-  
+
   const brandName = typeof brand === 'object' ? brand.name : brand;
   const brandImage = typeof brand === 'object' ? brand.image : null;
-  
+
   return (
     <div className="flex items-center gap-1 mb-1">
       {brandImage && (
-        <img 
-          src={brandImage} 
+        <img
+          src={brandImage}
           alt={brandName}
           className={`rounded object-cover ${isCompact ? 'w-4 h-4' : 'w-6 h-6'}`}
         />
@@ -41,19 +41,19 @@ const BrandDisplay: React.FC<{ brand: any; isCompact?: boolean }> = ({ brand, is
 // Centralized price calculation utility
 const calculateFinalPrice = (product: Product) => {
   const hasDiscount = product.discount && product.discount > 0;
-  return product.netPrice || 
+  return product.netPrice ||
     (hasDiscount ? product.price - (product.price * product.discount / 100) : product.price);
 };
 
 // Enhanced price display component
-const PriceDisplay: React.FC<{ 
+const PriceDisplay: React.FC<{
   product: Product;
   currencySymbol: string;
   isCompact?: boolean;
 }> = ({ product, currencySymbol, isCompact = false }) => {
   const hasDiscount = product.discount && product.discount > 0;
   const finalPrice = calculateFinalPrice(product);
-  
+
   if (hasDiscount) {
     return (
       <div className="space-y-1">
@@ -65,7 +65,7 @@ const PriceDisplay: React.FC<{
             </span>
           </div>
         )}
-        
+
         {/* Price Section */}
         <div className="flex items-center gap-2">
           <span className={`font-bold text-red-600 ${isCompact ? 'text-lg' : 'text-xl'}`}>
@@ -75,7 +75,7 @@ const PriceDisplay: React.FC<{
             {currencySymbol} {product.price.toLocaleString()}
           </span>
         </div>
-        
+
         {/* Discount percentage in compact mode */}
         {isCompact && (
           <div className="text-xs text-red-600 font-medium">
@@ -89,7 +89,7 @@ const PriceDisplay: React.FC<{
   // No discount - show regular price
   return (
     <div className="flex items-baseline gap-2">
-      <span className={`font-bold text-purple-600 ${isCompact ? 'text-lg' : 'text-xl'}`}>
+      <span className={`font-bold text-primary ${isCompact ? 'text-lg' : 'text-xl'}`}>
         {currencySymbol} {finalPrice.toLocaleString()}
       </span>
     </div>
@@ -109,7 +109,7 @@ const ProductsPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currencySymbol } = useConstants();
-  
+
   const [currentPage] = useState(1);
   const [selectedCategory] = useState<string>(
     searchParams.get('category') || ''
@@ -188,7 +188,7 @@ const ProductsPage: React.FC = () => {
     if (filterCurrentPage > 1) {
       params.set('page', filterCurrentPage.toString());
     }
-    
+
     setSearchParams(params);
   }, [filters.selectedCategories, filterCurrentPage, setSearchParams]);
 
@@ -211,9 +211,9 @@ const ProductsPage: React.FC = () => {
   const handleAddToCart = useCallback((product: Product, event: React.MouseEvent) => {
     event.stopPropagation();
     event.preventDefault();
-    
+
     const finalPrice = calculateFinalPrice(product);
-    
+
     const cartItemData = {
       productId: product._id,
       name: product.name,
@@ -234,7 +234,7 @@ const ProductsPage: React.FC = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-white dark:bg-black transition-colors duration-300">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
             <div className="h-8 bg-gray-200 rounded w-64 mb-4 animate-pulse"></div>
@@ -265,18 +265,18 @@ const ProductsPage: React.FC = () => {
   const selectedCategoryName = filters.selectedCategories.length > 0 ? filters.selectedCategories[0] : '';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white dark:bg-black transition-colors duration-300">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {selectedCategoryName 
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            {selectedCategoryName
               ? `${selectedCategoryName.charAt(0).toUpperCase() + selectedCategoryName.slice(1)} Products`
               : 'All Products'
             }
           </h1>
-          <p className="text-gray-600">
-            {selectedCategoryName 
+          <p className="text-gray-600 dark:text-gray-400">
+            {selectedCategoryName
               ? `Discover our ${selectedCategoryName} collection`
               : 'Discover our complete product collection'
             }
@@ -317,12 +317,12 @@ const ProductsPage: React.FC = () => {
             {/* Controls */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div className="flex items-center gap-4">
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
                   {totalResults} product{totalResults !== 1 ? 's' : ''} found
                   {selectedCategoryName && ` in ${selectedCategoryName}`}
                 </div>
                 {selectedCategoryName && (
-                  <div className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded">
+                  <div className="text-xs text-primary bg-primary/5 px-2 py-1 rounded">
                     Showing all {selectedCategoryName} products
                   </div>
                 )}
@@ -333,21 +333,19 @@ const ProductsPage: React.FC = () => {
                 <div className="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 transition-colors duration-200 ${
-                      viewMode === 'grid' 
-                        ? 'bg-purple-600 text-white' 
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
+                    className={`p-2 transition-colors duration-200 ${viewMode === 'grid'
+                      ? 'bg-primary text-white'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                      }`}
                   >
                     <Grid className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 transition-colors duration-200 ${
-                      viewMode === 'list' 
-                        ? 'bg-purple-600 text-white' 
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
+                    className={`p-2 transition-colors duration-200 ${viewMode === 'list'
+                      ? 'bg-primary text-white'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                      }`}
                   >
                     <List className="w-4 h-4" />
                   </button>
@@ -362,13 +360,13 @@ const ProductsPage: React.FC = () => {
                   <Package className="w-8 h-8 text-gray-400" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-700 mb-2">
-                  {selectedCategoryName 
-                    ? `No products found in ${selectedCategoryName}` 
+                  {selectedCategoryName
+                    ? `No products found in ${selectedCategoryName}`
                     : 'No products available'
                   }
                 </h3>
                 <p className="text-gray-500 mb-4">
-                  {selectedCategoryName 
+                  {selectedCategoryName
                     ? 'Try adjusting your filters or selecting a different category'
                     : 'Check back later for new arrivals'
                   }
@@ -376,7 +374,7 @@ const ProductsPage: React.FC = () => {
                 {selectedCategoryName && (
                   <button
                     onClick={() => handleCategorySelect('')}
-                    className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg transition-colors duration-200"
+                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg transition-colors duration-200 shadow-lg shadow-primary/20"
                   >
                     <span>View All Products</span>
                   </button>
@@ -389,9 +387,9 @@ const ProductsPage: React.FC = () => {
                   // Grid View - Use existing ProductCard component
                   <div className="grid gap-4 md:gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                     {displayProducts.map((product: Product) => (
-                      <ProductCard 
-                        key={product._id} 
-                        product={product} 
+                      <ProductCard
+                        key={product._id}
+                        product={product}
                       />
                     ))}
                   </div>
@@ -402,7 +400,7 @@ const ProductsPage: React.FC = () => {
                       <div
                         key={product._id}
                         onClick={() => handleProductClick(product._id)}
-                        className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border hover:border-purple-200 group flex gap-4 p-4"
+                        className="bg-white dark:bg-gray-800/50 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 dark:border-gray-700 hover:border-primary transition-all group flex gap-4 p-4"
                       >
                         {/* Product Image */}
                         <div className="relative bg-gray-100 w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden">
@@ -411,7 +409,7 @@ const ProductsPage: React.FC = () => {
                             alt={product.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
-                          
+
                           {/* Badges */}
                           <div className="absolute top-2 left-2 flex flex-col gap-1">
                             {/* Discount Badge */}
@@ -421,7 +419,7 @@ const ProductsPage: React.FC = () => {
                               </div>
                             )}
                             {product.featured && (
-                              <div className="bg-purple-600 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                              <div className="bg-primary text-white px-2 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-sm">
                                 <Star className="w-3 h-3 fill-current" />
                                 Featured
                               </div>
@@ -442,7 +440,7 @@ const ProductsPage: React.FC = () => {
                           {product.stock > 0 && (
                             <button
                               onClick={(e) => handleAddToCart(product, e)}
-                              className="absolute bottom-2 right-2 w-8 h-8 bg-purple-600 hover:bg-purple-700 text-white rounded-full flex items-center justify-center transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110 shadow-lg"
+                              className="absolute bottom-2 right-2 w-8 h-8 bg-primary hover:bg-primary-dark text-white rounded-full flex items-center justify-center transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110 shadow-lg"
                             >
                               <ShoppingCart className="w-4 h-4" />
                             </button>
@@ -455,16 +453,16 @@ const ProductsPage: React.FC = () => {
                           <BrandDisplay brand={product.brand} isCompact={true} />
 
                           {/* Product Name */}
-                          <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-purple-700 transition-colors duration-200 leading-tight">
+                          <h3 className="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors duration-200 leading-tight">
                             {truncateText(product.name, 80)}
                           </h3>
 
                           {/* Description with WYSIWYG support */}
                           {product.description && (
-                            <div 
+                            <div
                               className="wysiwyg-content prose prose-sm max-w-none text-sm text-gray-600 mb-3 leading-relaxed"
-                              dangerouslySetInnerHTML={{ 
-                                __html: truncateText(product.description, 360) 
+                              dangerouslySetInnerHTML={{
+                                __html: truncateText(product.description, 360)
                               }}
                               style={{
                                 fontFamily: 'inherit',
@@ -483,19 +481,19 @@ const ProductsPage: React.FC = () => {
                                 currencySymbol={currencySymbol}
                                 isCompact={false}
                               />
-                              
+
                               {product.stock > 0 && (
                                 <div className="text-xs text-gray-500 mt-1">
                                   {product.stock > 10 ? 'In Stock' : `${product.stock} left`}
                                 </div>
                               )}
                             </div>
-                            
+
                             {/* Category Tag */}
                             {product.category && (
                               <div className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full flex-shrink-0">
-                                {typeof product.category === 'object' 
-                                  ? product.category.name 
+                                {typeof product.category === 'object'
+                                  ? product.category.name
                                   : product.category
                                 }
                               </div>

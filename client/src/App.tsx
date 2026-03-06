@@ -1,17 +1,17 @@
 // client/src/App.tsx - Updated with banner route
 import React, { Suspense, lazy, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {  Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from './components/routes/ProtectedRoute';
 import PublicRoute from './components/routes/PublicRoute';
+import ScrollToTop from './components/common/ScrollToTop';
 
 import Loader from './components/common/Loader';
 import { useGetMeQuery } from './redux/api/user.api';
 import { userExists, userNotExists } from './redux/reducers/user.reducer';
 import { AppDispatch, RootState } from './redux/store';
-import DebugConnection from './components/DebugConnection';
 import DynamicPage from './pages/DynamicPage';
 import { useMetadata } from './hooks/useMetadata';
 
@@ -58,10 +58,10 @@ const App: React.FC = () => {
 
     return (
         <>
-            {process.env.NODE_ENV === 'development' && <DebugConnection />}
             <ToastContainer position="bottom-center" />
             <div className="flex flex-col min-h-screen">
                 <Router>
+                    <ScrollToTop />
                     <Suspense fallback={<Loader />}>
                         <Routes>
                             {/* Public routes */}
@@ -75,7 +75,7 @@ const App: React.FC = () => {
 
                                 {/* Dynamic pages from database - Generic route */}
                                 <Route path="/pages/:slug" element={<DynamicPage />} />
-                                
+
                                 <Route path="search" element={<SearchPage />} />
                             </Route>
 
@@ -86,15 +86,15 @@ const App: React.FC = () => {
 
                             {/* Protected routes */}
                             <Route element={<ProtectedRoute />}>
-                                    <Route element={<Layout />}>
-                                        <Route path="cart" element={<CartPage />} />
-                                        <Route path="profile" element={<ProfilePage />} />
-                                        <Route path="my-orders" element={<MyOrders />} />
-                                        <Route path="/order/:id" element={<OrderDetails />} />
-                                  
+                                <Route element={<Layout />}>
+                                    <Route path="cart" element={<CartPage />} />
+                                    <Route path="profile" element={<ProfilePage />} />
+                                    <Route path="my-orders" element={<MyOrders />} />
+                                    <Route path="/order/:id" element={<OrderDetails />} />
+
                                     <Route path="shipping" element={<Shipping />} />
                                     <Route path="checkout" element={<CheckoutForm />} />
-                                      </Route>
+                                </Route>
                             </Route>
 
                             {/* Fallback route */}

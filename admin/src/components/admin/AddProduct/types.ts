@@ -9,6 +9,7 @@ export interface ProductFormData {
   price: number;
   discount: number;
   status: boolean;
+  featured: boolean;
 }
 
 export interface Category {
@@ -47,6 +48,7 @@ export interface ProductFormProps {
   onSubcategoryChange: (selectedSubcategories: string[]) => void;
   onDescriptionChange: (value: string) => void;
   onStatusChange: (status: boolean) => void; // Added status handler
+  onFeaturedChange: (featured: boolean) => void; // Added featured handler
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (data: ProductFormData) => Promise<void>;
 }

@@ -11,6 +11,7 @@ export interface NewProductBody {
     description: string;
     discount?: number; // Added discount field
     status?: boolean; // NEW: Published status (default: true)
+    featured?: boolean; // NEW: Featured status (default: false)
 }
 
 export interface BaseQueryType {
@@ -23,6 +24,7 @@ export interface BaseQueryType {
         $lte?: number;
     };
     status?: boolean; // NEW: Status filter
+    featured?: boolean; // NEW: Featured filter
 }
 
 export interface SearchProductsQuery {
@@ -30,7 +32,7 @@ export interface SearchProductsQuery {
     category?: string;
     subcategory?: string; // Added subcategory search
     brand?: string;
-    sort?: 'asc' | 'desc' | 'relevance';    
+    sort?: 'asc' | 'desc' | 'relevance';
     price?: string; // Assuming price is in the format "min,max"
     page?: string;
     includeUnpublished?: string;
@@ -76,4 +78,5 @@ export interface NewOrderRequestBody {
     discount: number;
     total: number;
     orderItems: OrderItemType[];
+    couponCode?: string; // Optional — passed when a coupon was applied in the cart
 }

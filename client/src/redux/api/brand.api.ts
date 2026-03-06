@@ -14,8 +14,8 @@ export const brandApi = createApi({
     reducerPath: 'brandAPI',
     baseQuery: fetchBaseQuery({
         baseUrl: import.meta.env.VITE_SERVER_URL 
-            ? `${import.meta.env.VITE_SERVER_URL}/api/v1/brands`
-            : `/api/v1/brands`,
+            ? `${import.meta.env.VITE_SERVER_URL}/brands`
+            : `/brands`,
         credentials: 'include',
     }),
     tagTypes: ['Brand'],

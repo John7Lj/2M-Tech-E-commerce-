@@ -11,17 +11,17 @@ interface PopularProductsProps {
   showViewAll?: boolean; // Add optional prop to control view all button
 }
 
-const PopularProducts: React.FC<PopularProductsProps> = ({ 
-  products, 
-  selectedCategory, 
-  limit = 50, 
-  showViewAll = true 
+const PopularProducts: React.FC<PopularProductsProps> = ({
+  products,
+  selectedCategory,
+  limit = 50,
+  showViewAll = true
 }) => {
   // Apply limit only if specified and greater than 0
   const displayedProducts = limit > 0 ? products.slice(0, limit) : products;
-  
+
   // Determine section title based on whether category is selected
-  const sectionTitle = selectedCategory 
+  const sectionTitle = selectedCategory
     ? `New ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(8)} Arrivals`
     : 'New Arrival Products';
 
@@ -30,45 +30,45 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
     return (
       <section className="container mx-auto my-8 p-4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-purple-600" />
-            <h2 className="text-2xl font-bold text-purple-900">{sectionTitle}</h2>
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-6 h-6 text-primary" />
+            <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">{sectionTitle}</h2>
           </div>
           {showViewAll && (
-            <Link 
-              to="/" 
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-6 py-3 rounded-full font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-primary/20"
             >
               <span>View All Products</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           )}
         </div>
-        
+
         {/* Empty state */}
         <div className="text-center py-16">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Package className="w-8 h-8 text-gray-400" />
           </div>
           <h3 className="text-lg font-medium text-gray-700 mb-2">
-            {selectedCategory 
-              ? `No new arrivals found in ${selectedCategory}` 
+            {selectedCategory
+              ? `No new arrivals found in ${selectedCategory}`
               : 'No new arrivals available'
             }
           </h3>
           <p className="text-gray-500 mb-4">
-            {selectedCategory 
+            {selectedCategory
               ? 'Try selecting a different category or check back later'
               : 'Check back later for exciting new arrivals'
             }
           </p>
-          <Link 
-            to="/products" 
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-8 py-4 rounded-full font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+          <Link
+            to="/products"
+            className="inline-flex items-center gap-3 bg-primary hover:bg-primary-dark text-white px-10 py-4 rounded-xl font-bold transition-all shadow-xl shadow-primary/20"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-5 h-5" />
             <span>Explore All Products</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </section>
@@ -81,23 +81,23 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div className="flex items-start gap-3">
           <div className="mt-1">
-            <Sparkles className="w-6 h-6 text-purple-600" />
+            <Sparkles className="w-7 h-7 text-primary" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-purple-900">{sectionTitle}</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight">{sectionTitle}</h2>
             {selectedCategory && (
               <p className="text-gray-600 text-sm mt-1">
-                Showing {displayedProducts.length} of {products.length} new arrival{products.length !== 1 ? 's' : ''}
+                Showing <span className="text-primary font-black">{displayedProducts.length}</span> of {products.length} stunning arrival{products.length !== 1 ? 's' : ''}
               </p>
             )}
           </div>
         </div>
         {showViewAll && (
-          <Link 
-            to={selectedCategory ? `/products?category=${selectedCategory}` : '/products'} 
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-6 py-3 rounded-full font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+          <Link
+            to={selectedCategory ? `/products?category=${selectedCategory}` : '/products'}
+            className="inline-flex items-center gap-2 bg-gray-50 dark:bg-gray-800 text-gray-500 hover:text-primary px-8 py-3 rounded-xl font-bold transition-all border border-gray-100 dark:border-gray-700"
           >
-            <span>View All {selectedCategory ? `${selectedCategory} Arrivals` : 'New Arrivals'}</span>
+            <span>View All</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         )}
@@ -118,13 +118,13 @@ const PopularProducts: React.FC<PopularProductsProps> = ({
             <p className="text-gray-600 font-medium">
               Showing {displayedProducts.length} of {products.length} new arrivals
             </p>
-            <Link 
+            <Link
               to={selectedCategory ? `/products?category=${selectedCategory}` : '/products'}
-              className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-10 py-4 rounded-full text-lg font-bold transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
+              className="inline-flex items-center gap-3 bg-primary hover:bg-primary-dark text-white px-12 py-5 rounded-2xl text-lg font-black transition-all shadow-2xl shadow-primary/30"
             >
-              <Sparkles className="w-5 h-5" />
-              <span>Discover All {products.length} {selectedCategory ? `${selectedCategory} ` : ''}New Arrivals</span>
-              <ArrowRight className="w-5 h-5" />
+              <Sparkles className="w-6 h-6" />
+              <span>Discover More</span>
+              <ArrowRight className="w-6 h-6" />
             </Link>
           </div>
         </div>

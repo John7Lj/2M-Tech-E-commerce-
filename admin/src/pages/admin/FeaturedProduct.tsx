@@ -30,20 +30,20 @@ const AdminFeaturedProducts: React.FC = () => {
         <div className="container mx-auto my-8 p-4 bg-white rounded-lg shadow-md min-h-screen">
             <h1 className="text-2xl font-bold mb-6">Admin - Featured Products</h1>
             <div className="overflow-x-auto">
-                <table className="min-w-full bg-white border rounded-lg">
-                    <thead className="bg-gray-100">
+                <table className="min-w-full bg-white border rounded-lg overflow-hidden">
+                    <thead className="bg-primary text-white">
                         <tr>
-                            <th className="py-3 px-4 border-b-2 border-gray-300 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Photos</th>
-                            <th className="py-3 px-4 border-b-2 border-gray-300 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">ID</th>
-                            <th className="py-3 px-4 border-b-2 border-gray-300 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-                            <th className="py-3 px-4 border-b-2 border-gray-300 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                            <th className="py-3 px-4 border-b-2 border-gray-300 text-left text-sm font-semibold uppercase tracking-wider">Photos</th>
+                            <th className="py-3 px-4 border-b-2 border-gray-300 text-left text-sm font-semibold uppercase tracking-wider">ID</th>
+                            <th className="py-3 px-4 border-b-2 border-gray-300 text-left text-sm font-semibold uppercase tracking-wider">Name</th>
+                            <th className="py-3 px-4 border-b-2 border-gray-300 text-left text-sm font-semibold uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {products.map(product => {
                             // Handle multiple images from photos array
-                            const productImages = product.photos && product.photos.length > 0 
-                                ? product.photos 
+                            const productImages = product.photos && product.photos.length > 0
+                                ? product.photos
                                 : [];
 
                             return (
@@ -54,18 +54,18 @@ const AdminFeaturedProducts: React.FC = () => {
                                                 <>
                                                     {/* Main Image */}
                                                     <div className="relative">
-                                                        <img 
-                                                            src={productImages[0]} 
-                                                            alt={`${product.name} - Main`} 
-                                                            className="w-20 h-20 object-cover rounded-lg border-2 border-gray-200 shadow-sm" 
+                                                        <img
+                                                            src={productImages[0]}
+                                                            alt={`${product.name} - Main`}
+                                                            className="w-20 h-20 object-cover rounded-lg border-2 border-gray-200 shadow-sm"
                                                         />
                                                         {productImages.length > 1 && (
-                                                            <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+                                                            <div className="absolute -top-1 -right-1 bg-primary text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-bold">
                                                                 {productImages.length}
                                                             </div>
                                                         )}
                                                     </div>
-                                                    
+
                                                     {/* Additional Images Preview */}
                                                     {productImages.length > 1 && (
                                                         <div className="flex flex-col space-y-1">
@@ -136,7 +136,7 @@ const AdminFeaturedProducts: React.FC = () => {
                         })}
                     </tbody>
                 </table>
-                
+
                 {/* Empty State */}
                 {products.length === 0 && !isLoading && (
                     <div className="text-center py-12">

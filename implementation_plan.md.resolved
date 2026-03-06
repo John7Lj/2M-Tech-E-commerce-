@@ -1,0 +1,348 @@
+# Comprehensive 2M Tech Audit — Implementation Plan
+
+Full audit of every file in the server, admin, and client codebases for security, logic, validation, code quality, and redundancy. This follows on from the previous audit that fixed 23 issues.
+
+## User Review Required
+
+> [!CAUTION]
+> **#1 IDOR vulnerability**: `GET /orders/:id` only requires [authenticateUser](file:///e:/MY-PROJECTS/2m%20tech/server/src/middleware/auth.middleware.ts#11-32) — any logged-in user can read any other user's order by guessing the ID. This is a serious production security issue.
+
+> [!CAUTION]
+> **#4 Mass-assignment in [updatePage](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/page.controller.ts#79-97)**: `Page.findByIdAndUpdate(req.params.id, req.body)` — an attacker can overwrite any field including [_id](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/cloudinary.ts#13-21), `createdAt`, `slug`, etc.
+
+> [!WARNING]
+> **#8 Bot token leak**: `getTelegramWebhookInfo` directly interpolates `process.env.TELEGRAM_BOT_TOKEN` into a `fetch` URL. If the response errors, the token could be logged.
+
+> [!IMPORTANT]
+> **#16 Error middleware ordering**: In [index.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/index.ts) the global `app.use((err, …))` handler is placed *before* [apiErrorMiddleware](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/ApiError.ts#10-27) at line 220, meaning [apiErrorMiddleware](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/ApiError.ts#10-27) is never reached for errors. Order must be swapped.
+
+> [!IMPORTANT]
+> **#21 Tax always 0**: [calculatePrice](file:///e:/MY-PROJECTS/2m%20tech/client/src/redux/reducers/cart.reducer.ts#123-145) in the cart reducer hardcodes `state.tax = 0`. If the project has no server-side tax, this is fine. If tax should be calculated, this is a gap. **I need your confirmation on whether you intend to add server-side tax calculation or if zero tax is correct for your market.**
+
+---
+
+## Proposed Changes
+
+### 🔴 Security Fixes
+
+---
+
+#### [MODIFY] [order.routes.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/routes/order.routes.ts)
+
+**#1 — IDOR: any user can view any order**
+
+`GET /:id` currently uses [authenticateUser](file:///e:/MY-PROJECTS/2m%20tech/server/src/middleware/auth.middleware.ts#11-32) only. Fix: add an ownership check.
+
+```diff
+-router.get('/:id', authenticateUser, getOrder);
++router.get('/:id', authenticateUser, getOrder);
+```
+
+The route stays the same, but the **controller** `getOrder` adds:
+
+#### [MODIFY] [order.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/order.controller.ts)
+
+```diff
+ export const getOrder = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+     const orderId = req.params.id;
+-    const order = await Order.findById(orderId).populate('user', 'name email');
++    const order = await Order.findById(orderId).populate('user', 'name email');
+     if (!order) return next(new ApiError(404, 'Order not found'));
++
++    // Ownership check: user can only view their own orders, admin can view any
++    const reqUser = (req as RequestWithUser).user;
++    if (reqUser.role !== 'admin' && order.user._id.toString() !== reqUser._id.toString()) {
++        return next(new ApiError(403, 'Not authorized to view this order'));
++    }
+
+     return res.status(200).json({ success: true, order });
+ });
+```
+
+---
+
+#### [MODIFY] [page.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/page.controller.ts)
+
+**#3 — Debug info leak in 404 response + console.logs**
+
+Remove all `console.log` debug statements and the `debug` object from the 404 response.
+
+**#4 — Mass assignment via raw `req.body`**
+
+Whitelist allowed fields in [updatePage](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/page.controller.ts#79-97):
+
+```diff
+ export const updatePage = async (req: Request, res: Response) => {
+   try {
++    const { title, slug, content, isPublished } = req.body;
+     const page = await Page.findByIdAndUpdate(
+       req.params.id,
+-      req.body,
++      { title, slug, content, isPublished },
+       { new: true }
+     );
+```
+
+**#17 — Wrap all page handlers in [asyncHandler](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/asyncHandler.ts#3-8)**
+
+All page handlers currently use manual try/catch. Wrap them in [asyncHandler](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/asyncHandler.ts#3-8) and use [ApiError](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/ApiError.ts#3-9) for consistency and to avoid swallowing unexpected errors.
+
+---
+
+#### [MODIFY] [brand.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/brand.controller.ts)
+
+**#7 — Regex injection in brand name search**
+
+Escape user input before using it in `RegExp`:
+
+```diff
++const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
++
+ const existingBrand = await Brand.findOne({
+-    name: { $regex: new RegExp(`^${name}$`, 'i') }
++    name: { $regex: new RegExp(`^${escapeRegex(name)}$`, 'i') }
+ });
+```
+
+Apply in both `createBrand` and `updateBrand`.
+
+---
+
+#### [MODIFY] [telegram.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/telegram.controller.ts)
+
+**#8 — Bot token leak**
+
+Move webhook info call into the `telegramService`:
+
+```diff
+-const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getWebhookInfo`);
++const result = await telegramService.getWebhookInfo();
+```
+
+Also remove all `console.log` statements.
+
+---
+
+#### [MODIFY] [banner.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/banner.controller.ts)
+
+**#14 — `getAllBanners` `includeInactive` has no auth guard**
+
+The `?includeInactive=true` query param is on a public route with no authentication. Fix:
+
+Move the `GET /` route behind optional auth and strip `includeInactive` for non-admins, similar to the product [guardUnpublished](file:///e:/MY-PROJECTS/2m%20tech/server/src/routes/product.route.ts#21-32) pattern.
+
+---
+
+### 🟠 Logic & Validation Fixes
+
+---
+
+#### [MODIFY] [order.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/order.controller.ts)
+
+**#2 — `deleteOrder` restores stock for delivered orders**
+
+Stock should only be restored if the order hasn't been delivered:
+
+```diff
+-await increaseStock(order.orderItems as any);
++if (order.status !== 'Delivered') {
++    await increaseStock(order.orderItems as any);
++}
+```
+
+---
+
+#### [MODIFY] [category.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/category.controller.ts)
+
+**#5 — Catch block swallows [ApiError](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/ApiError.ts#3-9) in delete**
+
+The catch block around the product-count check catches [ApiError](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/ApiError.ts#3-9) (thrown when products exist) and logs a misleading message, allowing the delete to proceed:
+
+```diff
+-  } catch (error) {
+-    console.log('Product model not found, continuing with category deletion');
++  } catch (error: any) {
++    if (error instanceof ApiError) throw error;
++    // Product model not available — continue with deletion
+   }
+```
+
+Apply same fix in `permanentDeleteCategory`.
+
+---
+
+#### [MODIFY] [subcategory.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/subcategory.controller.ts)
+
+**#5 — Same catch-block swallowing bug**
+
+Identical fix as category controller for `deleteSubcategory` and `permanentDeleteSubcategory`.
+
+---
+
+#### [MODIFY] [utils.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/utils.ts)
+
+**#12 — [reduceStock](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/utils.ts#4-13) allows negative stock**
+
+```diff
+ product.stock = product.stock - item.quantity;
++if (product.stock < 0) throw new Error(`Insufficient stock for product: ${product.name}`);
+```
+
+---
+
+#### [MODIFY] [coupon.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/coupon.controller.ts)
+
+**#15 — Coupon discount can exceed subtotal**
+
+In [order.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/order.controller.ts) `newOrder`, cap the discount:
+
+```diff
+ computedDiscount = coupon.amount;
++// Cap discount so order never goes negative
++computedDiscount = Math.min(computedDiscount, computedSubTotal);
+```
+
+---
+
+#### [MODIFY] [settings.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/settings.controller.ts)
+
+**#10 — Cannot clear fields**
+
+`phone || settings.phone` prevents setting a field to empty string `''`. Fix by checking for `undefined`:
+
+```diff
+-settings.companyName = companyName || settings.companyName;
++settings.companyName = companyName !== undefined ? companyName : settings.companyName;
+```
+
+Apply to all fields.
+
+---
+
+#### [MODIFY] [settings.model.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/models/settings.model.ts)
+
+**#11 — `via.placeholder.com` default logo URL**
+
+Replace with a local placeholder path or empty string.
+
+---
+
+#### [MODIFY] [index.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/index.ts)
+
+**#16 — Error middleware ordering**
+
+```diff
+-app.use((err: any, req: Request, res: Response, next: NextFunction) => { ... });
+-app.use(apiErrorMiddleware);
++app.use(apiErrorMiddleware);
++app.use((err: any, req: Request, res: Response, next: NextFunction) => { ... });
+```
+
+The [apiErrorMiddleware](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/ApiError.ts#10-27) handles structured [ApiError](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/ApiError.ts#3-9) instances first. The global catch-all handles everything else.
+
+**#18 — Unused Firebase Firestore init**
+
+```diff
+-try {
+-  firebaseApp.firestore();
+-} catch (error) {
+-  console.error('Firebase initialization error:', error);
+-}
+```
+
+Remove this block — the app uses Firebase Auth only, not Firestore.
+
+---
+
+### 🟡 Code Quality & Cleanup
+
+---
+
+#### Multiple files
+
+**#9 — Remove 20+ `console.log` statements**
+
+Files affected:
+- [category.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/category.controller.ts) (lines 45, 135, 141, 186, 219, 226)
+- [subcategory.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/subcategory.controller.ts) (line 21, 231, 266)
+- [settings.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/settings.controller.ts) (lines 59, 61)
+- [telegram.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/telegram.controller.ts) (lines 9, 20, 22, 26, 28, 34, 78)
+- [cloudinary.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/cloudinary.ts) (lines 47, 61, 86, 97, 105)
+
+Replace with `winston.warn`/`winston.error` where needed, or remove entirely.
+
+---
+
+#### [MODIFY] [upload.middleware.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/middleware/upload.middleware.ts)
+
+**#13 — No file-type restriction**
+
+This middleware appears unused (the Cloudinary upload middleware is used instead), but if it's kept, add [fileFilter](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/cloudinary.ts#31-39):
+
+```diff
+ const upload = multer({
+     storage: storage,
++    fileFilter: (req, file, cb) => {
++        if (file.mimetype.startsWith('image/')) {
++            cb(null, true);
++        } else {
++            cb(new Error('Only image files are allowed'));
++        }
++    },
++    limits: { fileSize: 10 * 1024 * 1024 }
+ });
+```
+
+---
+
+#### [MODIFY] [category.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/category.controller.ts) & [subcategory.controller.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/subcategory.controller.ts)
+
+**#19 — Duplicate [extractPublicId](file:///e:/MY-PROJECTS/2m%20tech/server/src/controllers/category.controller.ts#7-23) helper**
+
+Extract into a shared utility in [utils/cloudinary.ts](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/cloudinary.ts) and import from there.
+
+---
+
+### 🟢 Client Fixes
+
+---
+
+#### [MODIFY] [cart.reducer.ts](file:///e:/MY-PROJECTS/2m%20tech/client/src/redux/reducers/cart.reducer.ts)
+
+**#20 — Self-assign `state.shippingCharges`**
+
+```diff
+-state.shippingCharges = state.shippingCharges;
++// shippingCharges is set externally via updateShippingCharges
+```
+
+Remove the no-op line.
+
+---
+
+## Verification Plan
+
+### Automated (TypeScript compilation)
+
+Run across all three apps:
+
+```bash
+cd e:\MY-PROJECTS\2m tech\server && npx tsc --noEmit
+cd e:\MY-PROJECTS\2m tech\admin && npx tsc --noEmit
+cd e:\MY-PROJECTS\2m tech\client && npx tsc --noEmit
+```
+
+All must pass with **0 errors**.
+
+### Manual Verification
+
+Since there are no existing tests in the project, verification is manual:
+
+1. **Order IDOR fix** — Log in as a regular user, try to access another user's order via the API endpoint `GET /api/v1/orders/<other-user-order-id>`. Should receive 403.
+2. **Page controller** — Hit `GET /api/v1/pages/non-existent-slug` and confirm the response does NOT contain a `debug` object.
+3. **Settings clear** — Update settings with an empty string for `phone` and confirm it actually clears.
+4. **Banner inactive guard** — Call `GET /api/v1/banners?includeInactive=true` without authentication and confirm inactive banners are NOT returned.
+5. **Error middleware order** — Trigger an [ApiError](file:///e:/MY-PROJECTS/2m%20tech/server/src/utils/ApiError.ts#3-9) (e.g., POST to a product endpoint with missing fields) and confirm the structured error response is returned (not the generic 500).
+
+> [!NOTE]
+> I recommend the user manually test items 1-5 after the changes are applied. These can be done via browser DevTools or Postman.

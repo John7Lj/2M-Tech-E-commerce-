@@ -13,17 +13,18 @@ export const useProductForm = () => {
     price: 0,
     discount: 0,
     status: true, // Default to published
+    featured: false, // Default to not featured
   });
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' 
+      [name]: type === 'checkbox'
         ? (e.target as HTMLInputElement).checked
-        : name === 'stock' || name === 'price' || name === 'discount' 
-        ? parseFloat(value) || 0 
-        : value
+        : name === 'stock' || name === 'price' || name === 'discount'
+          ? parseFloat(value) || 0
+          : value
     }));
   };
 
@@ -57,6 +58,13 @@ export const useProductForm = () => {
     }));
   };
 
+  const handleFeaturedChange = (featured: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      featured
+    }));
+  };
+
   const resetForm = () => {
     setFormData({
       name: '',
@@ -68,6 +76,7 @@ export const useProductForm = () => {
       price: 0,
       discount: 0,
       status: true, // Reset to published
+      featured: false, // Reset to not featured
     });
   };
 
@@ -78,6 +87,7 @@ export const useProductForm = () => {
     handleSubcategoryChange,
     handleDescriptionChange,
     handleStatusChange,
+    handleFeaturedChange,
     resetForm,
     setFormData
   };

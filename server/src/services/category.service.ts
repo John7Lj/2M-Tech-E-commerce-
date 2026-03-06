@@ -13,7 +13,7 @@ export class CategoryService {
      */
     static async findMatchingCategory(inputCategory: string) {
         const normalizedInput = this.normalizeCategoryName(inputCategory);
-        
+
         // Try exact match first
         let category = await Category.findOne({
             $or: [
@@ -22,7 +22,7 @@ export class CategoryService {
             ],
             isActive: true
         });
-        
+
         // If no exact match, try partial match
         if (!category) {
             category = await Category.findOne({
@@ -33,7 +33,7 @@ export class CategoryService {
                 isActive: true
             });
         }
-        
+
         return category;
     }
 
@@ -42,9 +42,8 @@ export class CategoryService {
      */
     static async validateAndNormalizeCategory(category: string): Promise<string> {
         const matchingCategory = await this.findMatchingCategory(category);
-        
+
         if (!matchingCategory) {
-            console.warn(`Warning: Category "${category}" not found in database`);
             return this.normalizeCategoryName(category);
         }
 

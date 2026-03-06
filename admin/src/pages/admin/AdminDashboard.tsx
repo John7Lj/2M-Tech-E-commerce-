@@ -43,8 +43,8 @@ const AdminDashboard: React.FC = () => {
                 label: 'Revenue by Month',
                 data: Object.values(stats?.revenueByMonth || {}),
                 fill: false,
-                backgroundColor: 'rgb(75, 192, 192)',
-                borderColor: 'rgba(75, 192, 192, 0.2)',
+                backgroundColor: '#D32F2F',
+                borderColor: 'rgba(211, 47, 47, 0.2)',
             },
         ],
     }), [stats]);
@@ -76,10 +76,10 @@ const AdminDashboard: React.FC = () => {
         <div className="p-4">
             {/* Widgets section */}
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <Widget heading="Total Revenue" value={` ${stats.totalRevenue}`} description="Overall revenue" color="bg-blue-500" />
-                <Widget heading="Total Orders" value={stats.totalOrders.toString()} description="Total number of orders" color="bg-green-500" />
-                <Widget heading="Active Coupons" value={stats.totalCoupons.toString()} description="Currently active coupons" color="bg-purple-500" />
-                <Widget heading="Total Products" value={stats.totalProducts.toString()} description="Total number of products" color="bg-red-500" />
+                <Widget heading="Total Revenue" value={` ${stats.totalRevenue}`} description="Overall revenue" color="bg-primary-dark" />
+                <Widget heading="Total Orders" value={stats.totalOrders.toString()} description="Total number of orders" color="bg-primary" />
+                <Widget heading="Active Coupons" value={stats.totalCoupons.toString()} description="Currently active coupons" color="bg-primary-light" />
+                <Widget heading="Total Products" value={stats.totalProducts.toString()} description="Total number of products" color="bg-gray-800" />
             </section>
 
             {/* Charts section */}

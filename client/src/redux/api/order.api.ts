@@ -1,14 +1,25 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { auth } from "../../firebaseConfig";
 import { AllOrdersResponse, MessageResponse, NewOrderRequest, OrderDetailsResponse } from "../../types/api-types";
 
 export const orderApi = createApi({
     reducerPath: "orderApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: import.meta.env.VITE_SERVER_URL 
-            ? `${import.meta.env.VITE_SERVER_URL}/api/v1/orders`
-            : `/api/v1/orders`,
+        baseUrl: import.meta.env.VITE_SERVER_URL
+            ? `${import.meta.env.VITE_SERVER_URL}/orders`
+            : `/orders`,
         credentials: 'include',
-        prepareHeaders: (headers) => {
+        prepareHeaders: async (headers) => {
+            await auth.authStateReady();
+            const user = auth.currentUser;
+            if (user) {
+                try {
+                    const token = await user.getIdToken();
+                    headers.set('Authorization', `Bearer ${token}`);
+                } catch (error) {
+                    console.error("Error getting auth token", error);
+                }
+            }
             headers.set('Content-Type', 'application/json');
             return headers;
         },
@@ -35,12 +46,6 @@ export const orderApi = createApi({
             query: (id) => id,
             providesTags: ['orders']
         }),
-      
-        // FIXED: This was the main issue - wrong endpoint structure
-       
-        testTelegram: builder.query<MessageResponse, void>({
-            query: () => 'test-telegram'
-        })
     })
 });
 
@@ -49,7 +54,4 @@ export const {
     useAllOrdersQuery,
     useMyOrdersQuery,
     useOrderDetailsQuery,
-   
-  
-    useTestTelegramQuery  // Add this for testing
 } = orderApi;

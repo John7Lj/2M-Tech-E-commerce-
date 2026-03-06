@@ -92,7 +92,7 @@ const CollectionsStyles: React.FC = () => {
         position: absolute;
         inset: -1px;
         padding: 1px;
-        background: linear-gradient(45deg, #8b5cf6, #3b82f6, #8b5cf6);
+        background: linear-gradient(45deg, #EF5350, #D32F2F, #EF5350);
         border-radius: inherit;
         mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
         mask-composite: exclude;
@@ -106,7 +106,7 @@ const CollectionsStyles: React.FC = () => {
         left: 50%;
         width: 0;
         height: 2px;
-        background: #007bff;
+        background: #D32F2F;
         transition: all 0.3s ease;
         transform: translateX(-50%);
       }

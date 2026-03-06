@@ -2,14 +2,14 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Package, Tag, Calendar, ShoppingBag } from 'lucide-react';
-import {   useGetBannerByIdQuery} from '../redux/api/banner.api';
+import { useGetBannerByIdQuery } from '../redux/api/banner.api';
 import Loader from '../components/common/Loader';
 import ProductCard from '../components/ProductCard';
 import { Product } from '../types/api-types';
 
 const BannerPage: React.FC = () => {
   const { bannerId } = useParams<{ bannerId: string }>();
-  const { data: bannerData, isLoading, isError } =   useGetBannerByIdQuery(bannerId!);
+  const { data: bannerData, isLoading, isError } = useGetBannerByIdQuery(bannerId!);
 
   if (isLoading) {
     return <Loader />;
@@ -17,22 +17,22 @@ const BannerPage: React.FC = () => {
 
   if (isError || !bannerData?.banner) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-secondary-dark flex items-center justify-center transition-colors duration-500">
         <div className="text-center px-4">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <div className="text-lg font-medium text-red-600 mb-2">Banner not found</div>
-          <div className="text-gray-500 mb-6">The banner you're looking for doesn't exist.</div>
-          
-          <Link 
+          <div className="text-xl font-black text-gray-900 dark:text-white mb-2 uppercase tracking-tight">Banner not found</div>
+          <div className="text-gray-500 dark:text-gray-400 mb-8 font-medium">The collection you're looking for doesn't exist.</div>
+
+          <Link
             to="/"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/20"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Go Home
+            Return Home
           </Link>
         </div>
       </div>
@@ -46,11 +46,11 @@ const BannerPage: React.FC = () => {
   const transformedProducts: Product[] = products.map((bannerProduct: any) => {
     const product = bannerProduct.product;
     const discountPercentage = bannerProduct.discountPercentage || 0;
-    
+
     // Calculate discounted price
     const originalPrice = product.price;
     const discountedPrice = originalPrice - (originalPrice * discountPercentage / 100);
-    
+
     return {
       ...product,
       discount: discountPercentage,
@@ -60,60 +60,60 @@ const BannerPage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white dark:bg-secondary-dark transition-colors duration-500 pb-20">
       {/* Banner Header */}
       <div className="relative">
-        <div 
-          className="relative bg-gradient-to-r from-purple-900 to-purple-700 overflow-hidden"
+        <div
+          className="relative bg-gray-900 overflow-hidden shadow-2xl"
           style={{
-            backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.4)), url(${banner.image})`,
+            backgroundImage: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.5)), url(${banner.image})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            minHeight: '400px'
+            minHeight: '450px'
           }}
         >
-          <div className="absolute inset-0 bg-black/40" />
-          
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
+
           {/* Back Button */}
           <div className="absolute top-6 left-6 z-20">
             <Link
               to="/"
-              className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors"
+              className="inline-flex items-center px-5 py-2.5 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl hover:bg-white/20 transition-all font-bold text-sm tracking-tight"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
+              Main Menu
             </Link>
           </div>
-          
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <div className="max-w-3xl">
-              <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              <h1 className="text-4xl md:text-7xl font-black text-white mb-6 uppercase tracking-tighter leading-none">
                 {banner.name}
               </h1>
-              <p className="text-xl text-gray-200 mb-8 leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-200 mb-10 leading-relaxed font-medium max-w-2xl">
                 {banner.description}
               </p>
-              
+
               {/* Banner Stats */}
-              <div className="flex flex-wrap items-center gap-6 mb-8">
-                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                  <Package className="w-5 h-5 text-white" />
-                  <span className="text-white font-medium">
-                    {products.length} Products
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-xl">
+                  <Package className="w-4 h-4 text-primary" />
+                  <span className="text-white font-bold text-sm">
+                    {products.length} Items
                   </span>
                 </div>
-                
-                <div className="flex items-center gap-2 bg-red-600 px-4 py-2 rounded-lg animate-pulse">
-                  <Tag className="w-5 h-5 text-white" />
-                  <span className="text-white font-semibold">
-                    Special Offers
+
+                <div className="flex items-center gap-2 bg-primary px-4 py-2 rounded-xl shadow-lg shadow-primary/40 animate-pulse">
+                  <Tag className="w-4 h-4 text-white" />
+                  <span className="text-white font-black text-sm uppercase tracking-wider">
+                    Exclusive
                   </span>
                 </div>
-                
+
                 {banner.createdAt && (
-                  <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                    <Calendar className="w-5 h-5 text-white" />
-                    <span className="text-white">
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-xl">
+                    <Calendar className="w-4 h-4 text-white/60" />
+                    <span className="text-white text-sm font-medium">
                       Since {new Date(banner.createdAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -125,60 +125,62 @@ const BannerPage: React.FC = () => {
       </div>
 
       {/* Products Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {transformedProducts.length > 0 ? (
           <>
-            <div className="flex items-center gap-3 mb-8">
-              <ShoppingBag className="w-6 h-6 text-purple-600" />
-              <h2 className="text-2xl font-bold text-gray-900">
-                Featured Products
+            <div className="flex items-center gap-4 mb-12">
+              <ShoppingBag className="w-8 h-8 text-primary" />
+              <h2 className="text-2xl md:text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tight">
+                Collection Items
               </h2>
-              <div className="h-px bg-gradient-to-r from-purple-200 to-transparent flex-1 ml-4" />
+              <div className="h-0.5 bg-primary/20 dark:bg-primary/10 flex-1 ml-4" />
             </div>
-            
+
             {/* Products Grid using ProductCard */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
               {transformedProducts.map((product) => (
-                <ProductCard 
-                  key={product._id} 
+                <ProductCard
+                  key={product._id}
                   product={product}
                 />
               ))}
             </div>
 
             {/* Additional Info */}
-            <div className="mt-12 bg-white rounded-xl shadow-sm border border-purple-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                About This Collection
+            <div className="mt-20 bg-gray-50 dark:bg-secondary-dark/50 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 p-8 md:p-16 overflow-hidden relative group">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-48 -mt-48 blur-[100px] group-hover:bg-primary/10 transition-colors" />
+
+              <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-8 uppercase tracking-tight relative">
+                About The Collection
               </h3>
-              <p className="text-gray-600 leading-relaxed mb-4">
+              <p className="text-gray-500 dark:text-gray-400 leading-relaxed mb-10 font-medium relative max-w-4xl text-lg">
                 {banner.description}
               </p>
-              <div className="flex flex-wrap gap-4 text-sm text-gray-500">
-                <span>• Exclusive discounts applied</span>
-                <span>• Limited time offers</span>
-                <span>• Premium quality products</span>
-                <span>• Fast shipping available</span>
+              <div className="flex flex-wrap gap-6 text-sm font-bold text-gray-400 dark:text-gray-500 relative uppercase tracking-widest">
+                <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-primary rounded-full"></div> Exclusive discounts applied</span>
+                <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-primary rounded-full"></div> Limited time offers</span>
+                <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-primary rounded-full"></div> Premium quality products</span>
+                <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-primary rounded-full"></div> Fast shipping available</span>
               </div>
             </div>
           </>
         ) : (
-          <div className="text-center py-16">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Package className="w-10 h-10 text-gray-400" />
+          <div className="text-center py-24">
+            <div className="w-32 h-32 bg-gray-50 dark:bg-gray-800 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 border border-gray-100 dark:border-gray-700 shadow-inner">
+              <Package className="w-12 h-12 text-gray-300 dark:text-gray-600" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No Products Available
+            <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-4 uppercase tracking-tight">
+              Empty Collection
             </h3>
-            <p className="text-gray-600 mb-8">
-              This banner doesn't have any products yet. Check back later for updates.
+            <p className="text-gray-500 dark:text-gray-400 mb-12 max-w-sm mx-auto font-medium text-lg leading-relaxed">
+              We're currently updating this collection with stunning new arrivals. Check back soon for the latest drops!
             </p>
-            <Link 
+            <Link
               to="/products"
-              className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              className="inline-flex items-center px-12 py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary-dark transition-all shadow-2xl shadow-primary/30"
             >
-              <ShoppingBag className="w-5 h-5 mr-2" />
-              Browse All Products
+              <ShoppingBag className="w-5 h-5 mr-3" />
+              Explore All Products
             </Link>
           </div>
         )}

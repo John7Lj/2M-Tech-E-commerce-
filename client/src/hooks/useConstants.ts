@@ -4,7 +4,7 @@ import { useGetDefaultCurrencyQuery } from '../redux/api/currency.api';
 // Default constants as fallback
 const DEFAULT_CONSTANTS = {
     companyName: 'My Company',
-    logo: 'https://via.placeholder.com/200x80/6366f1/ffffff?text=LOGO',
+    logo: 'https://placehold.co/200x80/6366f1/ffffff?text=LOGO',
     phone: '',
     email: '',
     address: '',
@@ -41,7 +41,7 @@ export const useConstants = () => {
         isLoading,
         isError,
         currencySymbol,
-        
+
         // Helper functions for common use cases
         getSocialLinks: () => ({
             facebook: constants.facebook,

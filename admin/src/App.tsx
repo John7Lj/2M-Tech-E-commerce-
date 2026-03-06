@@ -34,24 +34,29 @@ const SubCategoryManagement = lazy(() => import('./components/admin/SubcategoryM
 const NotFoundPage = lazy(() => import('./pages/NotFound'));
 const CurrencyManagement = lazy(() => import('./components/admin/CurrencyManagement'));
 const PageManagement = lazy(() => import('./components/admin/PageManagement'));
-const SettingMangmet = lazy(()=>import('./pages/admin/AdminSettings'));
-const BannerManagement =  lazy(()=>import('./components/admin/BannerManagement'));
+const SettingMangmet = lazy(() => import('./pages/admin/AdminSettings'));
+const BannerManagement = lazy(() => import('./components/admin/BannerManagement'));
 const App: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { data, error } = useGetMeQuery();
+    const { data, error, isFetching } = useGetMeQuery();
     const { loading, user } = useSelector((state: RootState) => state.user);
 
     // Dispatch user status on data or error change
     useEffect(() => {
         if (data?.user) {
             dispatch(userExists(data.user));
-        } else if (error) {
-            dispatch(userNotExists());
+        } else if (!isFetching) {
+            // Only mark as not exists if we are NOT fetching
+            // and maybe check if we have an admin_token (if we do, we might still be waiting for some reason)
+            const token = localStorage.getItem('admin_token');
+            if (error || (!data?.user && !token)) {
+                dispatch(userNotExists());
+            }
         }
-    }, [data, error, dispatch]);
+    }, [data, error, isFetching, dispatch]);
 
-    // Show loader while loading user data
-    if (loading) return <Loader />;
+    // Show loader while loading user data OR if we're currently fetching the initial 'me' request
+    if (loading || isFetching) return <Loader />;
 
     return (
         <>
@@ -61,13 +66,13 @@ const App: React.FC = () => {
                     <Suspense fallback={<Loader />}>
                         <Routes>
                             {/* Root route - redirect based on user status */}
-                            <Route 
-                                path="/" 
+                            <Route
+                                path="/"
                                 element={
-                                    user && user.role === 'admin' 
+                                    user && user.role === 'admin'
                                         ? <Navigate to="/admin/dashboard" replace />
                                         : <Navigate to="/auth" replace />
-                                } 
+                                }
                             />
 
                             {/* Auth route */}
@@ -93,8 +98,8 @@ const App: React.FC = () => {
                                     <Route path="subcategories" element={<SubCategoryManagement />} />
                                     <Route path="currencies" element={<CurrencyManagement />} />
                                     <Route path="page" element={<PageManagement />} />
-                                     <Route path="setting" element={<SettingMangmet />} />
-                                      <Route path="banner" element={<BannerManagement />} />
+                                    <Route path="setting" element={<SettingMangmet />} />
+                                    <Route path="banner" element={<BannerManagement />} />
 
 
                                 </Route>

@@ -14,13 +14,13 @@ const Layout: React.FC<LayoutProps> = ({ showWhatsApp = true }) => {
       <div className='w-full'>
         <Header />
         {/* ✅ FIXED: Remove container padding and max-width for full-width components */}
-       <main className="w-full -mt-0">
-  <Outlet />
-</main>
+        <main className="w-full pt-16 md:pt-20">
+          <Outlet />
+        </main>
 
-        
+
         <Footer />
-        
+
         {/* WhatsApp floating button */}
         {showWhatsApp && <WhatsAppButton />}
       </div>

@@ -18,8 +18,9 @@ export type MessageResponse = {
 
 export type UserLoginResponse = {
     success: boolean;
+    message: string;
     user: User;
-    token: string;
+    token?: string;
 }
 
 export type UserLoginRequest = {
@@ -115,7 +116,7 @@ export interface Product {
     featured: boolean;
     createdAt: string;
     updatedAt: string;
-        status: boolean; // NEW: Published status
+    status: boolean; // NEW: Published status
 
 }
 
@@ -255,7 +256,6 @@ export type NewOrderRequest = {
     discount: number;
     total: number;
     shippingInfo: ShippingInfo;
-    userId: string;
 }
 
 // Update Order
@@ -288,7 +288,8 @@ export type ApplyCouponRequest = {
 
 export type ApplyCouponResponse = {
     success: boolean;
-    coupon: Coupon;
+    discount: number;
+    code: string;
     message: string;
 }
 

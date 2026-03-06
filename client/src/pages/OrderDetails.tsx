@@ -19,7 +19,7 @@ const OrderDetails: React.FC = () => {
 
     return (
         <div className="container mx-auto my-8 p-4 bg-white rounded-lg shadow-md min-h-screen">
-            
+
             <BackButton />
             <h2 className="text-2xl font-bold mb-6 text-center">Order Details</h2>
             <div className="mb-6">
@@ -32,14 +32,14 @@ const OrderDetails: React.FC = () => {
                 <p>Address: <span className="font-medium">{order.shippingInfo.address}</span></p>
                 <p>City: <span className="font-medium">{order.shippingInfo.city}</span></p>
                 <p>Phone: <span className="font-medium">{order.shippingInfo.phone}</span></p>
-                    <p>Country: <span className="font-medium">{order.shippingInfo.country}</span></p>
+                <p>Country: <span className="font-medium">{order.shippingInfo.country}</span></p>
             </div>
             <div className="mb-6">
                 <h3 className="text-xl font-semibold mb-2">Order Items</h3>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-blue-100">
+                            <tr className="bg-primary/5">
                                 <th className="p-4">Product</th>
                                 <th className="p-4">Quantity</th>
                                 <th className="p-4">Price</th>
@@ -64,7 +64,7 @@ const OrderDetails: React.FC = () => {
                     </table>
                 </div>
             </div>
-            <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
+            <div className="bg-primary/5 p-4 rounded-lg shadow-sm border border-primary/10">
                 <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
                 <div className="flex justify-between mb-2">
                     <span>Subtotal</span>

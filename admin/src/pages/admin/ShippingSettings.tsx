@@ -47,7 +47,7 @@ const ShippingSettings: React.FC = () => {
 
     const validateShippingForm = () => {
         const { minOrderValue, maxOrderValue, shippingCost } = shippingFormData;
-        
+
         if (!minOrderValue.trim() || !maxOrderValue.trim() || !shippingCost.trim()) {
             toast.error('All fields are required');
             return false;
@@ -140,7 +140,7 @@ const ShippingSettings: React.FC = () => {
     if (shippingTiersLoading) {
         return (
             <div className="flex justify-center items-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
         );
     }
@@ -149,7 +149,7 @@ const ShippingSettings: React.FC = () => {
         <div className="space-y-8">
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <FaTruck className="mr-3 text-blue-600" />
+                    <FaTruck className="mr-3 text-primary" />
                     Shipping Tiers Management
                 </h3>
                 <motion.button
@@ -157,7 +157,7 @@ const ShippingSettings: React.FC = () => {
                         setShowShippingForm(!showShippingForm);
                         if (showShippingForm) resetShippingForm();
                     }}
-                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                 >
@@ -177,7 +177,7 @@ const ShippingSettings: React.FC = () => {
                     <h4 className="text-md font-semibold mb-4 text-gray-700">
                         {editingTier ? 'Edit Shipping Tier' : 'Add New Shipping Tier'}
                     </h4>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -189,11 +189,11 @@ const ShippingSettings: React.FC = () => {
                                 step="0.01"
                                 value={shippingFormData.minOrderValue}
                                 onChange={(e) => handleShippingFormChange('minOrderValue', e.target.value)}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                 placeholder="0.00"
                             />
                         </div>
-                        
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Maximum Order Value ($)
@@ -204,11 +204,11 @@ const ShippingSettings: React.FC = () => {
                                 step="0.01"
                                 value={shippingFormData.maxOrderValue}
                                 onChange={(e) => handleShippingFormChange('maxOrderValue', e.target.value)}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                 placeholder="100.00"
                             />
                         </div>
-                        
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Shipping Cost ($)
@@ -219,7 +219,7 @@ const ShippingSettings: React.FC = () => {
                                 step="0.01"
                                 value={shippingFormData.shippingCost}
                                 onChange={(e) => handleShippingFormChange('shippingCost', e.target.value)}
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                 placeholder="10.00"
                             />
                         </div>
@@ -229,14 +229,14 @@ const ShippingSettings: React.FC = () => {
                         <button
                             onClick={editingTier ? handleUpdateShippingTier : handleCreateShippingTier}
                             disabled={isCreatingTier || isUpdatingTier}
-                            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center space-x-2"
+                            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center space-x-2"
                         >
                             {(isCreatingTier || isUpdatingTier) && (
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                             )}
                             <span>
-                                {isCreatingTier || isUpdatingTier ? 
-                                    (editingTier ? 'Updating...' : 'Creating...') : 
+                                {isCreatingTier || isUpdatingTier ?
+                                    (editingTier ? 'Updating...' : 'Creating...') :
                                     (editingTier ? 'Update Tier' : 'Create Tier')
                                 }
                             </span>
@@ -254,7 +254,7 @@ const ShippingSettings: React.FC = () => {
             {/* Existing Shipping Tiers */}
             <div>
                 <h4 className="text-md font-semibold mb-4 text-gray-700">Current Shipping Tiers</h4>
-                
+
                 {shippingTiers.length === 0 ? (
                     <div className="text-center py-8 bg-gray-50 rounded-lg">
                         <FaTruck className="mx-auto text-4xl text-gray-400 mb-4" />
@@ -268,61 +268,61 @@ const ShippingSettings: React.FC = () => {
                         {[...shippingTiers]
                             .sort((a, b) => a.minOrderValue - b.minOrderValue)
                             .map((tier) => (
-                            <div
-                                key={tier._id}
-                                className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                            >
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center space-x-6">
-                                        <div className="text-center">
-                                            <div className="text-lg font-bold text-blue-600">
-                                                ${tier.minOrderValue} - ${tier.maxOrderValue}
+                                <div
+                                    key={tier._id}
+                                    className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-6">
+                                            <div className="text-center">
+                                                <div className="text-lg font-bold text-primary">
+                                                    ${tier.minOrderValue} - ${tier.maxOrderValue}
+                                                </div>
+                                                <div className="text-sm text-gray-500">Order Range</div>
                                             </div>
-                                            <div className="text-sm text-gray-500">Order Range</div>
-                                        </div>
-                                        <div className="text-center">
-                                            <div className="text-lg font-bold text-green-600">
-                                                ${tier.shippingCost}
+                                            <div className="text-center">
+                                                <div className="text-lg font-bold text-primary-dark">
+                                                    ${tier.shippingCost}
+                                                </div>
+                                                <div className="text-sm text-gray-500">Shipping Cost</div>
                                             </div>
-                                            <div className="text-sm text-gray-500">Shipping Cost</div>
                                         </div>
-                                    </div>
-                                    
-                                    <div className="flex space-x-2">
-                                        <button
-                                            onClick={() => handleEditShippingTier(tier)}
-                                            className="px-3 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors text-sm flex items-center space-x-1"
-                                        >
-                                            <FaEdit className="w-3 h-3" />
-                                            <span>Edit</span>
-                                        </button>
-                                        
-                                        <button
-                                            onClick={() => handleDeleteShippingTier(tier._id)}
-                                            disabled={isDeletingTier}
-                                            className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 text-sm flex items-center space-x-1"
-                                        >
-                                            {isDeletingTier ? (
-                                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                                            ) : (
-                                                <FaTrash className="w-3 h-3" />
-                                            )}
-                                            <span>Delete</span>
-                                        </button>
+
+                                        <div className="flex space-x-2">
+                                            <button
+                                                onClick={() => handleEditShippingTier(tier)}
+                                                className="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-sm flex items-center space-x-1"
+                                            >
+                                                <FaEdit className="w-3 h-3" />
+                                                <span>Edit</span>
+                                            </button>
+
+                                            <button
+                                                onClick={() => handleDeleteShippingTier(tier._id)}
+                                                disabled={isDeletingTier}
+                                                className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 text-sm flex items-center space-x-1"
+                                            >
+                                                {isDeletingTier ? (
+                                                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                                                ) : (
+                                                    <FaTrash className="w-3 h-3" />
+                                                )}
+                                                <span>Delete</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
                     </div>
                 )}
             </div>
 
             {/* Info Box */}
-            <div className="p-4 bg-blue-50 border-l-4 border-blue-500">
+            <div className="p-4 bg-primary/5 border-l-4 border-primary">
                 <div className="flex">
                     <div className="ml-3">
-                        <p className="text-sm text-blue-700">
-                            <strong>How it works:</strong> Create shipping tiers based on order value ranges. 
+                        <p className="text-sm text-primary">
+                            <strong>How it works:</strong> Create shipping tiers based on order value ranges.
                             For example: $0-$50 = $10 shipping, $50-$100 = $5 shipping, $100+ = Free shipping.
                             Customers will automatically get the appropriate shipping cost based on their cart total.
                         </p>

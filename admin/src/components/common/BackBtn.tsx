@@ -12,7 +12,7 @@ const BackButton: React.FC = () => {
     return (
         <button
             onClick={handleBack}
-            className="flex items-center bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none my-4 transition-colors duration-300"
+            className="flex items-center bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark focus:outline-none my-4 transition-colors duration-300 shadow-sm hover:shadow-md"
         >
             <FaArrowLeft className="mr-2" />
             Back

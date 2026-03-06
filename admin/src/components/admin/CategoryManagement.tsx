@@ -65,7 +65,7 @@ const CategoryManagement: React.FC = () => {
 
     const submitData = new FormData();
     submitData.append('name', formData.name.trim());
-    
+
     if (imageFile) {
       submitData.append('image', imageFile);
     }
@@ -106,7 +106,7 @@ const CategoryManagement: React.FC = () => {
         <h2 className="text-2xl font-bold">Category Management</h2>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors"
         >
           <FaPlus /> Add Category
         </button>
@@ -119,7 +119,7 @@ const CategoryManagement: React.FC = () => {
             <h3 className="text-xl font-bold mb-4">
               {editingCategory ? 'Edit Category' : 'Add New Category'}
             </h3>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Category Name</label>
@@ -127,7 +127,7 @@ const CategoryManagement: React.FC = () => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary"
                   placeholder="e.g., Hard Disk, Laptop, Mobile Phone"
                   required
                 />
@@ -156,7 +156,7 @@ const CategoryManagement: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isCreating || isUpdating}
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  className="flex-1 bg-primary text-white py-2 rounded-lg hover:bg-primary-dark disabled:opacity-50"
                 >
                   {(isCreating || isUpdating) ? 'Saving...' : (editingCategory ? 'Update' : 'Create')}
                 </button>
@@ -178,51 +178,50 @@ const CategoryManagement: React.FC = () => {
         {categoriesData?.categories
           .filter(category => category.isActive)
           .map((category) => (
-          <div key={category._id} className="bg-white rounded-lg shadow-md p-4 border hover:shadow-lg transition-shadow">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg">{category.name}</h3>
-                <p className="text-xs text-gray-500 mt-1">Value: {category.value}</p>
+            <div key={category._id} className="bg-white rounded-lg shadow-md p-4 border hover:shadow-lg transition-shadow">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg">{category.name}</h3>
+                  <p className="text-xs text-gray-500 mt-1">Value: {category.value}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEdit(category)}
+                    className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                    title="Edit Category"
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(category._id, category.name)}
+                    disabled={isDeleting}
+                    className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50"
+                    title="Delete Category"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleEdit(category)}
-                  className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-                  title="Edit Category"
-                >
-                  <FaEdit />
-                </button>
-                <button
-                  onClick={() => handleDelete(category._id, category.name)}
-                  disabled={isDeleting}
-                  className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50"
-                  title="Delete Category"
-                >
-                  <FaTrash />
-                </button>
+
+              {category.image && (
+                <img
+                  src={category.image}
+                  alt={category.name}
+                  className="w-full h-32 object-cover rounded-lg mb-3"
+                />
+              )}
+
+              <div className="flex items-center justify-between text-sm">
+                <span className={`px-2 py-1 rounded-full text-xs ${category.isActive ? 'bg-primary/10 text-primary' : 'bg-red-100 text-red-800'
+                  }`}>
+                  {category.isActive ? 'Active' : 'Inactive'}
+                </span>
+                <span className="text-gray-500">
+                  {new Date(category.createdAt).toLocaleDateString()}
+                </span>
               </div>
             </div>
-            
-            {category.image && (
-              <img 
-                src={category.image} 
-                alt={category.name} 
-                className="w-full h-32 object-cover rounded-lg mb-3"
-              />
-            )}
-            
-            <div className="flex items-center justify-between text-sm">
-              <span className={`px-2 py-1 rounded-full text-xs ${
-                category.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}>
-                {category.isActive ? 'Active' : 'Inactive'}
-              </span>
-              <span className="text-gray-500">
-                {new Date(category.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
 
       {(!categoriesData?.categories.filter(cat => cat.isActive).length) && (
@@ -230,7 +229,7 @@ const CategoryManagement: React.FC = () => {
           <p className="text-gray-500 text-lg">No active categories found</p>
           <button
             onClick={() => setShowForm(true)}
-            className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="mt-4 bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition-colors"
           >
             Create Your First Category
           </button>

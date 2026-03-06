@@ -10,6 +10,10 @@ const orderSchema = new mongoose.Schema({
             type: String,
             required: [true, "Please enter city"]
         },
+        state: {
+            type: String,
+            default: ''
+        },
         phone: {
             type: String,
             required: [true, "Please enter phone number"]
@@ -20,7 +24,7 @@ const orderSchema = new mongoose.Schema({
         },
     }, // <-- Added missing closing brace and comma here
     user: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
@@ -43,12 +47,12 @@ const orderSchema = new mongoose.Schema({
     },
     discount: {
         type: Number,
-        default: 0,   
+        default: 0,
     },
     status: {
         type: String,
-        enum: ["Pending","Processing", "Shipped", "Delivered"],
-        default: "Processing",
+        enum: ["Pending", "Processing", "Shipped", "Delivered"],
+        default: "Pending",
     },
     orderItems: [
         {

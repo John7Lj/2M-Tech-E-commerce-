@@ -13,7 +13,6 @@ const safeParseLocalStorage = (key: string, defaultValue: any) => {
         }
         return parsed;
     } catch (error) {
-        console.warn(`Error parsing localStorage key "${key}":`, error);
         return defaultValue;
     }
 };
@@ -67,7 +66,7 @@ export const cartReducer = createSlice({
                 // If the item already exists in the cart, increment its quantity
                 // Limit the quantity to the stock available
                 state.cartItems[index].quantity = Math.min(
-                    state.cartItems[index].quantity + action.payload.quantity, 
+                    state.cartItems[index].quantity + action.payload.quantity,
                     action.payload.stock
                 );
             } else {
@@ -80,14 +79,14 @@ export const cartReducer = createSlice({
         },
         removeCartItem: (state, action: PayloadAction<string>) => {
             state.loading = true;
-            
+
             // Ensure cartItems is always an array
             if (!Array.isArray(state.cartItems)) {
                 state.cartItems = [];
             } else {
                 state.cartItems = state.cartItems.filter(item => item.productId !== action.payload);
             }
-            
+
             state.loading = false;
             saveToLocalStorage(state);
         },
@@ -128,13 +127,11 @@ export const cartReducer = createSlice({
 
             const subTotal = state.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
             state.subTotal = subTotal;
-            
-            // Note: Shipping charges will be calculated dynamically by the component
-            // using the shipping tier API. We set a default here for fallback.
-            state.shippingCharges = state.cartItems.length > 0 ? 0 : 0; // Will be updated by API call
+
+            // Shipping charges are updated externally via updateShippingCharges action
             state.tax = 0;
             state.total = state.subTotal + state.shippingCharges - state.discount;
-            
+
             // If the discount is greater than the total price, limit the discount to the total price
             if (state.total < 0) {
                 state.discount = state.subTotal + state.shippingCharges;
@@ -143,10 +140,13 @@ export const cartReducer = createSlice({
         },
         // New action to update shipping charges from API
         updateShippingCharges: (state, action: PayloadAction<number>) => {
+            // Recompute subTotal from cartItems in case items changed before shipping was fetched
+            if (Array.isArray(state.cartItems)) {
+                state.subTotal = state.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+            }
             state.shippingCharges = action.payload;
             state.total = state.subTotal + state.shippingCharges - state.discount;
-            
-            // If the discount is greater than the total price, limit the discount to the total price
+
             if (state.total < 0) {
                 state.discount = state.subTotal + state.shippingCharges;
                 state.total = 0;
@@ -174,7 +174,7 @@ export const cartReducer = createSlice({
             } catch (error) {
                 console.warn('Error clearing localStorage:', error);
             }
-            
+
             // Reset to initial state
             state.loading = false;
             state.cartItems = [];
@@ -188,16 +188,16 @@ export const cartReducer = createSlice({
     }
 });
 
-export const { 
-    addToCart, 
-    removeCartItem, 
-    incrementCartItem, 
-    decrementCartItem, 
+export const {
+    addToCart,
+    removeCartItem,
+    incrementCartItem,
+    decrementCartItem,
     calculatePrice,
     updateShippingCharges,
-    discountApplied, 
-    resetCart, 
-    saveShippingInfo 
+    discountApplied,
+    resetCart,
+    saveShippingInfo
 } = cartReducer.actions;
 
 export default cartReducer.reducer;

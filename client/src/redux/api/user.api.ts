@@ -1,21 +1,32 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { auth } from '../../firebaseConfig';
 import { UserLoginRequest, UserLoginResponse, UserRegisterRequest, UserResponse } from '../../types/api-types';
 
 export const userApi = createApi({
     reducerPath: 'userAPI',
-   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_SERVER_URL 
-        ? `${import.meta.env.VITE_SERVER_URL}/api/v1/auth`
-        : `/api/v1/auth`,
-    credentials: 'include',
-    prepareHeaders: (headers, { endpoint }) => {
-        // Don't set Content-Type for FormData uploads
-        if (endpoint !== 'updateProfile') {
-            headers.set('Content-Type', 'application/json');
-        }
-        return headers;
-    },
-}),
+    baseQuery: fetchBaseQuery({
+        baseUrl: import.meta.env.VITE_SERVER_URL
+            ? `${import.meta.env.VITE_SERVER_URL}/auth`
+            : `/auth`,
+        credentials: 'include',
+        prepareHeaders: async (headers, { endpoint }) => {
+            const user = auth.currentUser;
+            await auth.authStateReady();
+            if (user) {
+                try {
+                    const token = await user.getIdToken();
+                    headers.set('Authorization', `Bearer ${token}`);
+                } catch (error) {
+                    console.error("Error getting auth token", error);
+                }
+            }
+            // Don't set Content-Type for FormData uploads
+            if (endpoint !== 'updateProfile') {
+                headers.set('Content-Type', 'application/json');
+            }
+            return headers;
+        },
+    }),
     tagTypes: ['User'],
     endpoints: (builder) => ({
         getAllUsers: builder.query({

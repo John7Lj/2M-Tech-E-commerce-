@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './WysiwygEditor.css';
+import { notify } from '../../../utils/util';
 
 // Define proper TypeScript interfaces for Quill formats
 interface QuillFontFormat {
@@ -11,7 +12,7 @@ interface QuillFontFormat {
 // Register custom fonts with Quill - Fixed TypeScript typing
 const Font = ReactQuill.Quill.import('formats/font') as QuillFontFormat;
 Font.whitelist = [
-  'arial', 'comic-sans', 'courier-new', 'georgia', 
+  'arial', 'comic-sans', 'courier-new', 'georgia',
   'helvetica', 'lucida', 'times-new-roman', 'trebuchet-ms', 'verdana'
 ];
 ReactQuill.Quill.register('formats/font', Font, true);
@@ -137,7 +138,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
   // Custom image handler
   const imageHandler = () => {
     if (!onImageUpload) {
-      alert('Image upload is not configured. Please use the main product image upload section.');
+      notify('Image upload is not configured. Please use the main product image upload section.', 'warning');
       return;
     }
 
@@ -151,7 +152,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
       if (!file) return;
 
       if (file.size > 2 * 1024 * 1024) {
-        alert('Image size should be less than 2MB');
+        notify('Image size should be less than 2MB', 'warning');
         return;
       }
 
@@ -169,7 +170,7 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
         quill.setSelection(range.index + 1, 'user');
       } catch (error) {
         console.error('Image upload failed:', error);
-        alert('Image upload failed. Please try again.');
+        notify('Image upload failed. Please try again.', 'error');
       }
     };
   };
@@ -178,18 +179,20 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
   const modules = useMemo(() => ({
     toolbar: {
       container: [
-        [{ 'font': [
-          'arial', 'comic-sans', 'courier-new', 'georgia', 
-          'helvetica', 'lucida', 'times-new-roman', 'trebuchet-ms', 
-          'verdana', false
-        ] }],
+        [{
+          'font': [
+            'arial', 'comic-sans', 'courier-new', 'georgia',
+            'helvetica', 'lucida', 'times-new-roman', 'trebuchet-ms',
+            'verdana', false
+          ]
+        }],
         [{ 'size': ['small', false, 'large', 'huge'] }],
         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
         ['bold', 'italic', 'underline', 'strike'],
-        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'script': 'sub' }, { 'script': 'super' }],
         [{ 'color': [] }, { 'background': [] }],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
-        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
+        [{ 'indent': '-1' }, { 'indent': '+1' }],
         [{ 'align': [] }],
         [{ 'direction': 'rtl' }],
         ['blockquote', 'code-block'],
@@ -230,13 +233,13 @@ const WysiwygEditor: React.FC<WysiwygEditorProps> = ({
         formats={formats}
         placeholder={placeholder}
         readOnly={disabled}
-        style={{ 
+        style={{
           height: `${height}px`,
           marginBottom: '42px'
         }}
         className="wysiwyg-editor enhanced-fonts"
       />
-      
+
       {!onImageUpload && (
         <p className="text-xs text-orange-600 mt-2">
           💡 Tip: Use the main image upload section above for product images. Text formatting only available here.

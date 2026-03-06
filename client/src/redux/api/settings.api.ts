@@ -33,8 +33,8 @@ export const settingsApi = createApi({
     reducerPath: 'settingsAPI',
     baseQuery: fetchBaseQuery({
         baseUrl: import.meta.env.VITE_SERVER_URL 
-            ? `${import.meta.env.VITE_SERVER_URL}/api/v1/settings`
-            : `/api/v1/settings`,
+            ? `${import.meta.env.VITE_SERVER_URL}/settings`
+            : `/settings`,
         credentials: 'include',
         prepareHeaders: (headers, { endpoint }) => {
             // Don't set Content-Type for FormData uploads

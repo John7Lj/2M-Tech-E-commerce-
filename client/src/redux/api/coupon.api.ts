@@ -6,8 +6,8 @@ export const couponApi = createApi({
     reducerPath: 'couponApi',
     baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_SERVER_URL 
-        ? `${import.meta.env.VITE_SERVER_URL}/api/v1/coupons`
-        : `/api/v1/coupons`,
+        ? `${import.meta.env.VITE_SERVER_URL}/coupons`
+        : `/coupons`,
     credentials: 'include',
     prepareHeaders: (headers) => {
         headers.set('Content-Type', 'application/json');

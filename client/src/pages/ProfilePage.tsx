@@ -2,9 +2,9 @@ import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  User, 
-  Package, 
+import {
+  User,
+  Package,
   Calendar,
   Edit3,
   Save,
@@ -27,12 +27,12 @@ const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const [activeTab, setActiveTab] = useState<'profile' | 'orders'>('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
-  
+
   const [editForm, setEditForm] = useState({
     name: user?.name || '',
     dob: user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
@@ -65,21 +65,19 @@ const ProfilePage: React.FC = () => {
       formData.append('name', editForm.name);
       formData.append('gender', editForm.gender);
       formData.append('dob', editForm.dob);
-      
+
       if (selectedFile) {
         formData.append('photo', selectedFile);
       }
 
       const response = await updateProfile(formData).unwrap();
-      
+
       if (response.success) {
         // Update Redux state with new user data
         dispatch(userExists(response.user));
         setIsEditing(false);
         setSelectedFile(null);
         setPreviewUrl('');
-        // Show success message or toast
-        console.log('Profile updated successfully');
       }
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -100,9 +98,9 @@ const ProfilePage: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'delivered': return 'text-green-600 bg-green-50 border-green-200';
-      case 'shipped': 
-      case 'processing': return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'delivered': return 'text-primary bg-primary/10 border-primary/20';
+      case 'shipped':
+      case 'processing': return 'text-primary bg-primary/5 border-primary/10';
       case 'pending': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
       case 'cancelled': return 'text-red-600 bg-red-50 border-red-200';
       default: return 'text-gray-600 bg-gray-50 border-gray-200';
@@ -113,7 +111,7 @@ const ProfilePage: React.FC = () => {
     switch (status.toLowerCase()) {
       case 'delivered': return CheckCircle;
       case 'shipped': return Truck;
-      case 'processing': 
+      case 'processing':
       case 'pending': return Clock;
       case 'cancelled': return AlertCircle;
       default: return Package;
@@ -128,12 +126,14 @@ const ProfilePage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <User className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Not Logged In</h2>
-          <p className="text-gray-600 mb-6">Please sign in to view your profile</p>
+          <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800 rounded-3xl flex items-center justify-center mx-auto mb-6 text-gray-300 dark:text-gray-600">
+            <User className="w-10 h-10" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Not Logged In</h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-sm mx-auto">Please sign in to access your profile and track your orders</p>
           <motion.button
             onClick={() => navigate('/auth')}
-            className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors duration-200"
+            className="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/20"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -149,27 +149,30 @@ const ProfilePage: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-xl overflow-hidden"
+        className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800"
       >
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-8 py-12 text-white">
-          <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+        <div className="bg-primary px-8 py-12 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/5 rounded-full -ml-10 -mb-10 blur-2xl" />
+
+          <div className="relative z-10 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
             <div className="relative">
               <motion.img
                 src={previewUrl || user.photoURL}
                 alt="Profile"
-                className="h-24 w-24 rounded-full border-4 border-white shadow-lg object-cover"
+                className="h-28 w-28 rounded-3xl border-4 border-white/20 shadow-2xl object-cover backdrop-blur-sm"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               />
               {isEditing && (
                 <motion.button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute -bottom-1 -right-1 p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors duration-200"
+                  className="absolute -bottom-2 -right-2 p-2.5 bg-white text-primary rounded-xl shadow-xl hover:bg-gray-50 transition-all border border-gray-100"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <Camera className="w-4 h-4 text-gray-600" />
+                  <Camera className="w-4 h-4" />
                 </motion.button>
               )}
               <input
@@ -181,34 +184,33 @@ const ProfilePage: React.FC = () => {
               />
             </div>
             <div className="text-center md:text-left">
-              <h1 className="text-3xl font-bold mb-2">
-                <span className="text-lg">Hello </span> 
+              <h1 className="text-3xl font-black mb-1 tracking-tight">
+                <span className="text-sm font-medium opacity-80 block uppercase tracking-widest mb-1">Account Dashboard</span>
                 {isEditing ? editForm.name : user.name}
               </h1>
-              <p className="text-purple-100 mb-2">{user.email}</p>
+              <p className="text-white/80 font-medium">{user.email}</p>
             </div>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="border-b border-gray-200">
+        <div className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
           <div className="flex space-x-8 px-8">
             {[
-              { id: 'profile', label: 'Profile Info', icon: User },
-              { id: 'orders', label: 'My Orders', icon: Package },
+              { id: 'profile', label: 'Profile Settings', icon: User },
+              { id: 'orders', label: 'Order History', icon: Package },
             ].map((tab) => (
               <motion.button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                  activeTab === tab.id
-                    ? 'border-purple-600 text-purple-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`flex items-center space-x-2 py-5 px-1 border-b-2 font-black text-xs uppercase tracking-widest transition-all ${activeTab === tab.id
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                  }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <tab.icon className="w-4 h-4" />
+                <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'animate-pulse' : ''}`} />
                 <span>{tab.label}</span>
               </motion.button>
             ))}
@@ -228,17 +230,23 @@ const ProfilePage: React.FC = () => {
                 className="space-y-8"
               >
                 {/* Personal Information */}
-                <div className="bg-gray-50 rounded-xl p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
+                <div>
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">Account Details</h3>
+                      <p className="text-sm text-primary hover:text-primary-dark transition-colors font-bold">Manage your personal information and preferences</p>
+                    </div>
                     <motion.button
                       onClick={() => isEditing ? handleCancelEdit() : setIsEditing(true)}
-                      className="flex items-center space-x-2 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
+                      className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg ${isEditing
+                        ? 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 shadow-none'
+                        : 'bg-primary text-white hover:bg-primary-dark shadow-primary/20'
+                        }`}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
                       {isEditing ? <X className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
-                      <span>{isEditing ? 'Cancel' : 'Edit'}</span>
+                      <span>{isEditing ? 'Cancel' : 'Edit Profile'}</span>
                     </motion.button>
                   </div>
 
@@ -251,32 +259,32 @@ const ProfilePage: React.FC = () => {
                       <>
                         {/* Edit Form */}
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700">Full Name</label>
+                          <label className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest pl-1">Full Name</label>
                           <input
                             type="text"
                             value={editForm.name}
                             onChange={(e) => handleEditFormChange('name', e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                            className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-gray-900 dark:text-white font-bold"
                             placeholder="Enter your full name"
                           />
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700">Date of Birth</label>
+                          <label className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest pl-1">Date of Birth</label>
                           <input
                             type="date"
                             value={editForm.dob}
                             onChange={(e) => handleEditFormChange('dob', e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                            className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-gray-900 dark:text-white font-bold"
                           />
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700">Gender</label>
+                          <label className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest pl-1">Gender</label>
                           <select
                             value={editForm.gender}
                             onChange={(e) => handleEditFormChange('gender', e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                            className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-gray-900 dark:text-white font-bold"
                           >
                             <option value="male">Male</option>
                             <option value="female">Female</option>
@@ -285,7 +293,7 @@ const ProfilePage: React.FC = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700">Profile Photo</label>
+                          <label className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest pl-1">Profile Photo</label>
                           <div className="flex items-center space-x-4">
                             <div className="flex-1">
                               <input
@@ -297,11 +305,11 @@ const ProfilePage: React.FC = () => {
                               />
                               <motion.button
                                 onClick={() => fileInputRef.current?.click()}
-                                className="w-full p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center space-x-2"
+                                className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all flex items-center justify-center space-x-2 text-gray-500 dark:text-gray-400 font-bold"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                               >
-                                <Upload className="w-4 h-4" />
+                                <Upload className="w-5 h-5" />
                                 <span>{selectedFile ? selectedFile.name : 'Choose new photo'}</span>
                               </motion.button>
                             </div>
@@ -309,7 +317,7 @@ const ProfilePage: React.FC = () => {
                               <img
                                 src={previewUrl}
                                 alt="Preview"
-                                className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200"
+                                className="w-16 h-16 rounded-2xl object-cover border-2 border-primary/20 shadow-lg"
                               />
                             )}
                           </div>
@@ -319,7 +327,7 @@ const ProfilePage: React.FC = () => {
                           <motion.button
                             onClick={handleSaveProfile}
                             disabled={isUpdating}
-                            className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:opacity-50"
+                            className="flex items-center space-x-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 disabled:opacity-50"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                           >
@@ -344,35 +352,43 @@ const ProfilePage: React.FC = () => {
                     ) : (
                       <>
                         {/* Display Mode */}
-                        <div className="flex items-center space-x-3 p-4 bg-white rounded-lg">
-                          <User className="w-5 h-5 text-purple-600" />
-                          <div>
-                            <p className="text-sm text-gray-500">Full Name</p>
-                            <p className="font-medium">{user.name}</p>
+                        <div className="flex items-center space-x-4 p-5 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+                          <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-sm text-primary">
+                            <User className="w-6 h-6" />
                           </div>
-                        </div>
-                       
-                        <div className="flex items-center space-x-3 p-4 bg-white rounded-lg">
-                          <Calendar className="w-5 h-5 text-purple-600" />
                           <div>
-                            <p className="text-sm text-gray-500">Date of Birth</p>
-                            <p className="font-medium">{new Date(user.dob).toLocaleDateString()}</p>
+                            <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest pl-0.5 mb-1">Full Name</p>
+                            <p className="font-bold text-gray-900 dark:text-white">{user.name}</p>
                           </div>
                         </div>
 
-                        <div className="flex items-center space-x-3 p-4 bg-white rounded-lg">
-                          <User className="w-5 h-5 text-purple-600" />
+                        <div className="flex items-center space-x-4 p-5 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+                          <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-sm text-primary">
+                            <Calendar className="w-6 h-6" />
+                          </div>
                           <div>
-                            <p className="text-sm text-gray-500">Gender</p>
-                            <p className="font-medium capitalize">{user.gender}</p>
+                            <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest pl-0.5 mb-1">Date of Birth</p>
+                            <p className="font-bold text-gray-900 dark:text-white">{new Date(user.dob).toLocaleDateString()}</p>
                           </div>
                         </div>
 
-                        <div className="flex items-center space-x-3 p-4 bg-white rounded-lg">
-                          <User className="w-5 h-5 text-purple-600" />
+                        <div className="flex items-center space-x-4 p-5 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+                          <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-sm text-primary">
+                            <User className="w-6 h-6" />
+                          </div>
                           <div>
-                            <p className="text-sm text-gray-500">Email</p>
-                            <p className="font-medium">{user.email}</p>
+                            <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest pl-0.5 mb-1">Gender</p>
+                            <p className="font-bold text-gray-900 dark:text-white capitalize">{user.gender}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-4 p-5 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+                          <div className="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-sm text-primary">
+                            <Edit3 className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest pl-0.5 mb-1">Email Address</p>
+                            <p className="font-bold text-gray-900 dark:text-white">{user.email}</p>
                           </div>
                         </div>
                       </>
@@ -402,27 +418,27 @@ const ProfilePage: React.FC = () => {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="flex items-center justify-center py-12"
+                    className="flex flex-col items-center justify-center py-20"
                   >
-                    <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
-                    <span className="ml-2 text-gray-600">Loading orders...</span>
+                    <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
+                    <span className="text-gray-500 font-bold uppercase tracking-widest text-xs">Loading orders...</span>
                   </motion.div>
                 ) : ordersError ? (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center py-12"
+                    className="text-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-3xl border border-gray-100 dark:border-gray-700"
                   >
-                    <AlertCircle className="w-16 h-16 mx-auto text-red-400 mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Orders</h3>
-                    <p className="text-gray-500 mb-6">There was an error loading your orders. Please try again.</p>
+                    <AlertCircle className="w-16 h-16 mx-auto text-red-500 mb-6" />
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Error Loading Orders</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-xs mx-auto">There was an error retrieving your order history. Please try again.</p>
                     <motion.button
                       onClick={() => window.location.reload()}
-                      className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors duration-200"
+                      className="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/20"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      Retry
+                      Retry Now
                     </motion.button>
                   </motion.div>
                 ) : ordersData?.orders && ordersData.orders.length > 0 ? (
@@ -435,64 +451,64 @@ const ProfilePage: React.FC = () => {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3, delay: index * 0.1 }}
-                          className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow duration-300"
+                          className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 sm:p-8 hover:shadow-xl transition-all duration-300 group"
                         >
-                          <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
-                            <div className="flex items-center space-x-4 mb-3 md:mb-0">
-                              <div className={`p-2 rounded-lg border ${getStatusColor(order.status)}`}>
-                                <StatusIcon className="w-5 h-5" />
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                            <div className="flex items-center space-x-5">
+                              <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center transition-colors ${getStatusColor(order.status)}`}>
+                                <StatusIcon className="w-7 h-7" />
                               </div>
                               <div>
-                                <h4 className="font-semibold text-gray-900">Order #{order._id}</h4>
-                                <p className="text-sm text-gray-500">
+                                <h4 className="font-black text-gray-900 dark:text-white text-lg tracking-tight">Order #{order._id.slice(-8).toUpperCase()}</h4>
+                                <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-0.5">
                                   Placed on {new Date(order.createdAt).toLocaleDateString()}
                                 </p>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <p className="text-2xl font-bold text-gray-900">${order.total.toFixed(2)}</p>
-                              <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
-                                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                            <div className="text-left md:text-right">
+                              <p className="text-3xl font-black text-primary mb-1 tracking-tighter">LE {order.total.toLocaleString()}</p>
+                              <span className={`inline-flex px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${getStatusColor(order.status)}`}>
+                                {order.status}
                               </span>
                             </div>
                           </div>
 
                           {/* Order Items */}
                           {order.orderItems && order.orderItems.length > 0 && (
-                            <div className="border-t border-gray-100 pt-4">
-                              <h5 className="text-sm font-medium text-gray-900 mb-3">Items:</h5>
-                              <div className="space-y-2">
+                            <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-800">
+                              <h5 className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Package Contents:</h5>
+                              <div className="space-y-4">
                                 {order.orderItems.map((item, itemIndex) => (
-                                  <div key={itemIndex} className="flex items-center justify-between text-sm">
-                                    <div className="flex items-center space-x-3">
-                                      <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                                      <span className="text-gray-700">{item.name}</span>
-                                      <span className="text-gray-500">× {item.quantity}</span>
+                                  <div key={itemIndex} className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-4">
+                                      <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse shadow-lg shadow-primary/50"></div>
+                                      <span className="text-sm font-bold text-gray-700 dark:text-gray-300 leading-tight">{item.name}</span>
+                                      <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md">× {item.quantity}</span>
                                     </div>
-                                    <span className="font-medium text-gray-900">${(item.price * item.quantity).toFixed(2)}</span>
+                                    <span className="text-sm font-black text-gray-900 dark:text-white">LE {(item.price * item.quantity).toLocaleString()}</span>
                                   </div>
                                 ))}
                               </div>
                             </div>
                           )}
 
-                          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                          <div className="flex items-center justify-between mt-8">
                             <motion.button
                               onClick={() => navigate(`/order/${order._id}`)}
-                              className="text-purple-600 hover:text-purple-700 font-medium transition-colors duration-200"
-                              whileHover={{ scale: 1.05 }}
+                              className="text-primary hover:text-primary-dark font-black text-xs uppercase tracking-widest transition-all px-2 py-1"
+                              whileHover={{ x: 5 }}
                               whileTap={{ scale: 0.95 }}
                             >
-                              View Details
+                              Details →
                             </motion.button>
                             {order.status.toLowerCase() === 'delivered' && (
                               <motion.button
-                                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
-                                whileHover={{ scale: 1.02 }}
+                                className="px-6 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-primary dark:hover:bg-primary hover:text-white dark:hover:text-white transition-all shadow-xl"
+                                whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={() => navigate('/products')}
                               >
-                                Reorder
+                                Buy Again
                               </motion.button>
                             )}
                           </div>
@@ -504,18 +520,18 @@ const ProfilePage: React.FC = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center py-12"
+                    className="text-center py-20 bg-gray-50 dark:bg-gray-800/30 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700"
                   >
-                    <Package className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">No Orders Yet</h3>
-                    <p className="text-gray-500 mb-6">Start shopping to see your orders here</p>
+                    <Package className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-700 mb-4" />
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Orders Yet</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-xs mx-auto">Start your journey with us and discover our amazing collections</p>
                     <motion.button
                       onClick={() => navigate('/products')}
-                      className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors duration-200"
+                      className="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/20"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      Start Shopping
+                      Browse Products
                     </motion.button>
                   </motion.div>
                 )}

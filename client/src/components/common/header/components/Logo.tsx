@@ -27,13 +27,13 @@ const Logo: React.FC<LogoProps> = ({ onLogoClick }) => {
   return (
     <div className="flex items-center">
       <Link to="/" onClick={onLogoClick} className="flex items-center space-x-3 md:space-x-4 lg:space-x-5 group">
-        <motion.div 
+        <motion.div
           className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14"
           whileHover={{ scale: 1.1, rotate: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <img 
-            src={constants.logo} 
+          <img
+            src={constants.logo}
             alt={`${constants.companyName} Logo`}
             className="w-full h-full rounded-lg object-cover transition-all duration-500 ease-out group-hover:brightness-110"
             onError={(e) => {
@@ -42,10 +42,10 @@ const Logo: React.FC<LogoProps> = ({ onLogoClick }) => {
             }}
           />
         </motion.div>
-        
+
         <div className="hidden sm:block">
-          <motion.span 
-            className="text-xl md:text-2xl lg:text-3xl fontfa-rotate-270 text-cyan-500 hover:text-cyan-700 tracking-tight cursor-pointer"
+          <motion.span
+            className="text-xl md:text-2xl lg:text-3xl font-black text-primary dark:text-white uppercase tracking-tighter"
           >
             {constants.companyName}
           </motion.span>

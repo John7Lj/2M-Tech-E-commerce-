@@ -29,7 +29,7 @@ const BannerManagement: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBanner, setEditingBanner] = useState<any>(null);
   const [isProductSelectorOpen, setIsProductSelectorOpen] = useState(false);
-  
+
   const [formData, setFormData] = useState<BannerFormData>({
     name: '',
     description: '',
@@ -43,11 +43,11 @@ const BannerManagement: React.FC = () => {
 
   // API hooks
   const { data: bannersData, isLoading: bannersLoading } = useGetAllBannersQuery({ includeInactive: true });
-  const { data: productsData, isLoading: productsLoading } = useAllProductsQuery({ 
-    page: 1, 
+  const { data: productsData, isLoading: productsLoading } = useAllProductsQuery({
+    page: 1,
     limit: 100,
   });
-  
+
   const [createBanner, { isLoading: creating }] = useCreateBannerMutation();
   const [updateBanner, { isLoading: updating }] = useUpdateBannerMutation();
   const [deleteBanner, { isLoading: deleting }] = useDeleteBannerMutation();
@@ -136,7 +136,7 @@ const BannerManagement: React.FC = () => {
 
   // Update product discount
   const updateProductDiscount = (productId: string, discount: number) => {
-    setSelectedProducts(prev => 
+    setSelectedProducts(prev =>
       prev.map(p => p.product === productId ? { ...p, discountPercentage: discount } : p)
     );
     setFormData(prev => ({
@@ -148,13 +148,13 @@ const BannerManagement: React.FC = () => {
   // Submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const submitFormData = new FormData();
     submitFormData.append('name', formData.name);
     submitFormData.append('description', formData.description);
     submitFormData.append('products', JSON.stringify(formData.products));
     submitFormData.append('isActive', formData.isActive.toString());
-    
+
     if (formData.image) {
       submitFormData.append('image', formData.image);
     }
@@ -203,7 +203,7 @@ const BannerManagement: React.FC = () => {
         <h1 className="text-2xl font-bold">Banner Management</h1>
         <button
           onClick={openCreateModal}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
+          className="bg-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary-dark"
         >
           <Plus className="w-4 h-4" />
           Create Banner
@@ -215,38 +215,36 @@ const BannerManagement: React.FC = () => {
         {banners.map((banner: any) => (
           <div key={banner._id} className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="relative h-48">
-              <img 
-                src={banner.image} 
+              <img
+                src={banner.image}
                 alt={banner.name}
                 className="w-full h-full object-cover"
               />
-              <div className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium ${
-                banner.isActive ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
-              }`}>
+              <div className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-medium ${banner.isActive ? 'bg-primary text-white' : 'bg-gray-500 text-white'
+                }`}>
                 {banner.isActive ? 'Active' : 'Inactive'}
               </div>
             </div>
-            
+
             <div className="p-4">
               <h3 className="font-semibold text-lg mb-2">{banner.name}</h3>
               <p className="text-gray-600 text-sm mb-3 line-clamp-2">{banner.description}</p>
               <p className="text-sm text-gray-500 mb-4">{banner.products.length} products</p>
-              
+
               <div className="flex gap-2">
                 <button
                   onClick={() => openEditModal(banner)}
-                  className="flex-1 bg-blue-600 text-white px-3 py-2 rounded text-sm flex items-center justify-center gap-1 hover:bg-blue-700"
+                  className="flex-1 bg-primary text-white px-3 py-2 rounded text-sm flex items-center justify-center gap-1 hover:bg-primary-dark"
                 >
                   <Edit2 className="w-3 h-3" />
                   Edit
                 </button>
                 <button
                   onClick={() => handleToggleStatus(banner._id)}
-                  className={`flex-1 px-3 py-2 rounded text-sm flex items-center justify-center gap-1 ${
-                    banner.isActive 
-                      ? 'bg-gray-600 text-white hover:bg-gray-700' 
-                      : 'bg-green-600 text-white hover:bg-green-700'
-                  }`}
+                  className={`flex-1 px-3 py-2 rounded text-sm flex items-center justify-center gap-1 ${banner.isActive
+                      ? 'bg-gray-600 text-white hover:bg-gray-700'
+                      : 'bg-primary text-white hover:bg-primary-dark'
+                    }`}
                 >
                   {banner.isActive ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                   {banner.isActive ? 'Hide' : 'Show'}
@@ -324,9 +322,9 @@ const BannerManagement: React.FC = () => {
 
                   {imagePreview && (
                     <div className="mb-4">
-                      <img 
-                        src={imagePreview} 
-                        alt="Preview" 
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
                         className="w-full h-32 object-cover rounded-lg"
                       />
                     </div>
@@ -353,7 +351,7 @@ const BannerManagement: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setIsProductSelectorOpen(true)}
-                      className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+                      className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary-dark"
                     >
                       Add Products
                     </button>
@@ -368,8 +366,8 @@ const BannerManagement: React.FC = () => {
                           const product = products.find(p => p._id === selectedProduct.product);
                           return (
                             <div key={selectedProduct.product} className="flex items-center gap-3 p-3 border rounded">
-                              <img 
-                                src={product?.photos[0]} 
+                              <img
+                                src={product?.photos[0]}
                                 alt={product?.name}
                                 className="w-12 h-12 object-cover rounded"
                               />
@@ -384,7 +382,7 @@ const BannerManagement: React.FC = () => {
                                   max="100"
                                   value={selectedProduct.discountPercentage}
                                   onChange={(e) => updateProductDiscount(
-                                    selectedProduct.product, 
+                                    selectedProduct.product,
                                     Number(e.target.value)
                                   )}
                                   className="w-16 border rounded px-2 py-1 text-sm"
@@ -418,7 +416,7 @@ const BannerManagement: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                  className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark"
                   disabled={creating || updating}
                 >
                   {creating || updating ? 'Saving...' : editingBanner ? 'Update Banner' : 'Create Banner'}
@@ -435,24 +433,23 @@ const BannerManagement: React.FC = () => {
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden">
             <div className="flex justify-between items-center p-6 border-b">
               <h3 className="text-lg font-semibold">Select Products</h3>
-              <button 
+              <button
                 onClick={() => setIsProductSelectorOpen(false)}
                 className="text-gray-500 hover:text-gray-700"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
-            
+
             <div className="p-6 overflow-y-auto max-h-[60vh]">
               <div className="grid gap-3 md:grid-cols-2">
                 {products.map((product: any) => {
                   const isSelected = selectedProducts.some(p => p.product === product._id);
                   return (
-                    <div 
-                      key={product._id} 
-                      className={`border rounded-lg p-3 cursor-pointer transition-colors ${
-                        isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                      }`}
+                    <div
+                      key={product._id}
+                      className={`border rounded-lg p-3 cursor-pointer transition-colors ${isSelected ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'
+                        }`}
                       onClick={() => {
                         if (isSelected) {
                           removeProductFromBanner(product._id);
@@ -462,19 +459,18 @@ const BannerManagement: React.FC = () => {
                       }}
                     >
                       <div className="flex items-center gap-3">
-                        <img 
-                          src={product.photos[0]} 
+                        <img
+                          src={product.photos[0]}
                           alt={product.name}
                           className="w-16 h-16 object-cover rounded"
                         />
                         <div className="flex-1">
                           <h4 className="font-medium text-sm">{product.name}</h4>
                           <p className="text-xs text-gray-500">{product.brand?.name}</p>
-                          <p className="text-sm font-semibold text-green-600">${product.price}</p>
+                          <p className="text-sm font-semibold text-primary">${product.price}</p>
                         </div>
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                          isSelected ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
-                        }`}>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-primary bg-primary' : 'border-gray-300'
+                          }`}>
                           {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
                         </div>
                       </div>
@@ -487,7 +483,7 @@ const BannerManagement: React.FC = () => {
             <div className="flex justify-end gap-3 p-6 border-t">
               <button
                 onClick={() => setIsProductSelectorOpen(false)}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark"
               >
                 Done ({selectedProducts.length} selected)
               </button>

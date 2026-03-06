@@ -18,8 +18,8 @@ export type MessageResponse = {
 
 export type UserLoginResponse = {
     success: boolean;
+    message: string;
     user: User;
-    token: string;
 }
 
 export type UserLoginRequest = {
@@ -99,11 +99,11 @@ export interface DeleteBrandRequest {
 export interface Product {
     name: string;
     _id: string;
-   category: string | { _id: string; name: string; value: string };
-  categories?: Array<string | { _id: string; name: string; value: string }>;
-  
-  subcategory?: string | { _id: string; name: string; value: string };
-  subcategories?: Array<string | { _id: string; name: string; value: string }>;
+    category: string | { _id: string; name: string; value: string };
+    categories?: Array<string | { _id: string; name: string; value: string }>;
+
+    subcategory?: string | { _id: string; name: string; value: string };
+    subcategories?: Array<string | { _id: string; name: string; value: string }>;
     brand: {
         _id: string;
         name: string;
@@ -118,9 +118,9 @@ export interface Product {
     featured: boolean;
     createdAt: string;
     updatedAt: string;
-    currencySymbol:string;
+    currencySymbol: string;
     discount: number;
-    netPrice:number;
+    netPrice: number;
 }
 
 export interface ProductResponse {
@@ -186,7 +186,7 @@ export type SearchProductRequest = {
     brand?: string; // Added brand search parameter
     search: string;
     sort: string;
-    
+
 }
 
 export type SearchProductResponse = ProductResponse & {
@@ -260,7 +260,7 @@ export type NewOrderRequest = {
     discount: number;
     total: number;
     shippingInfo: ShippingInfo;
-    userId: string;
+    couponCode?: string; // Passed for server-side coupon re-validation
 }
 
 // Update Order
@@ -276,6 +276,10 @@ export type Coupon = {
     _id: string;
     createdAt: string;
     updatedAt: string;
+    expiresAt?: string | null;
+    maxUses?: number | null;
+    usedCount?: number;
+    minOrderValue?: number;
 }
 
 export type AllCouponsResponse = {
@@ -289,17 +293,22 @@ export type AllCouponsRequest = {
 
 export type ApplyCouponRequest = {
     code: string;
+    orderTotal?: number; // Optional — used for minimum order value validation
 }
 
 export type ApplyCouponResponse = {
     success: boolean;
-    coupon: Coupon;
+    discount: number;
+    code: string;
     message: string;
 }
 
 export type NewCouponRequest = {
     code: string;
     amount: number | string;
+    expiresAt?: string;
+    maxUses?: number;
+    minOrderValue?: number;
 }
 
 export type DeleteCouponRequest = {
@@ -363,4 +372,20 @@ export type CustomError = {
         message: string;
         success: boolean;
     }
+}
+
+// -- Page Types --
+export interface Page {
+    _id: string;
+    title: string;
+    slug: string;
+    content: string;
+    isPublished: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface PageDetailResponse {
+    success: boolean;
+    page: Page;
 }

@@ -10,10 +10,10 @@ import BannerSection from '../components/BannerSection';
 
 const HomePage: React.FC = () => {
     // Fetch latest products for display
-    const { data: productData, isLoading: productLoading, isError: productError, refetch } = useLatestProductsQuery({ 
+    const { data: productData, isLoading: productLoading, isError: productError, refetch } = useLatestProductsQuery({
         limit: 24
     });
-    
+
     const products = productData?.products || [];
 
     const handleRefresh = () => {
@@ -21,7 +21,7 @@ const HomePage: React.FC = () => {
     };
 
     if (productLoading) {
-        return <Loader/>;
+        return <Loader />;
     }
 
     if (productError) {
@@ -35,10 +35,10 @@ const HomePage: React.FC = () => {
                     </div>
                     <div className="text-lg font-medium text-red-600 mb-2">Error loading products</div>
                     <div className="text-gray-500 mb-6">Please try again later</div>
-                    
-                    <button 
+
+                    <button
                         onClick={handleRefresh}
-                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        className="inline-flex items-center px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all shadow-lg shadow-primary/20"
                     >
                         <RefreshCw className="w-4 h-4 mr-2" />
                         Try Again
@@ -50,47 +50,47 @@ const HomePage: React.FC = () => {
 
     if (products.length === 0) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center transition-colors">
                 <div className="text-center px-4">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-6 text-gray-300 dark:text-gray-600">
+                        <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                         </svg>
                     </div>
-                    <div className="text-lg font-medium text-gray-700 mb-2">No products available</div>
-                    <div className="text-gray-500 mb-6">Check back later for new arrivals</div>
-                    
-                    <button 
+                    <div className="text-xl font-bold text-gray-900 dark:text-white mb-2">No products available</div>
+                    <div className="text-gray-500 dark:text-gray-400 mb-8 max-w-xs mx-auto">Check back later for our new professional arrivals</div>
+
+                    <button
                         onClick={handleRefresh}
-                        className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                        className="inline-flex items-center px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all shadow-lg shadow-primary/20"
                     >
                         <RefreshCw className="w-4 h-4 mr-2" />
-                        Refresh
+                        Refresh Store
                     </button>
                 </div>
             </div>
         );
     }
 
-   return (
-    <div className="min-h-screen">
-        {/* Clean, minimal background */}
-        <div className="relative">
+    return (
+        <div className="min-h-screen bg-white dark:bg-black transition-colors duration-300">
+            {/* Clean, minimal background */}
+            <div className="relative">
                 {/* Content */}
                 <div className="relative z-10">
                     {/* Banner Section */}
-                     <BannerSection />
+                    <BannerSection />
 
                     {/* Collections Section */}
                     <Collections />
-                    
+
                     {/* New Arrivals Section */}
-                    <NewArrivals 
+                    <NewArrivals
                         products={products}
                         limit={24}
                         showViewAll={true}
                     />
-                    
+
                     {/* Featured Section */}
                     <FeaturedSection />
                 </div>

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { FaWhatsapp, FaTimes } from 'react-icons/fa';
+import { MessageCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface WhatsAppButtonProps {
   phoneNumber?: string;
@@ -9,8 +11,8 @@ interface WhatsAppButtonProps {
 }
 
 const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
-  phoneNumber = "201006683289",
-  message = " Hello",
+  phoneNumber = "201063166996",
+  message = "مرحباً 👋\nانا اتي من موقع 2M Technology",
   className = "",
   title = ""
 }) => {
@@ -20,88 +22,90 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
     {
       id: 'whatsapp',
       icon: FaWhatsapp,
-      label: title || 'WhatsApp',
+      label: title || 'WhatsApp Chat',
       action: () => {
         const encodedMessage = encodeURIComponent(message || '');
         const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
         window.open(whatsappUrl, '_blank');
       },
-      color: 'bg-green-500 hover:bg-green-600',
-      textColor: 'text-green-500'
+      color: 'bg-[#25D366] hover:bg-[#128C7E]',
     },
-   
   ];
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
-    <div className={`fixed bottom-20 right-6 z-50 ${className}`}>
-      {/* Main Toggle Button - Fixed Position */}
-      <button
+    <div className={`fixed bottom-24 right-6 z-[60] ${className}`}>
+      {/* Floating Menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.8 }}
+            className="absolute bottom-16 right-0 mb-2 w-52"
+          >
+            <div className="bg-white dark:bg-secondary-dark rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+              <div className="bg-primary p-4">
+                <p className="text-white text-xs font-bold uppercase tracking-widest opacity-80">Contact Us</p>
+                <p className="text-white font-bold text-sm">How can we help?</p>
+              </div>
+              <div className="p-2">
+                {contacts.map((contact) => (
+                  <button
+                    key={contact.id}
+                    onClick={() => { contact.action(); setIsOpen(false); }}
+                    className="flex items-center space-x-3 w-full p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all group"
+                  >
+                    <div className={`w-10 h-10 ${contact.color} text-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                      <contact.icon className="text-xl" />
+                    </div>
+                    <span className="text-sm font-bold text-gray-700 dark:text-gray-200">{contact.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main Toggle Button */}
+      <motion.button
         onClick={toggleMenu}
-        className={`${
-          isOpen 
-            ? 'bg-gray-600 hover:bg-gray-700 rotate-45' 
-            : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-        } text-white rounded-full p-4 shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 relative z-10`}
-        aria-label={isOpen ? "Close contact menu" : "Open contact menu"}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${isOpen
+          ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 rotate-90'
+          : 'bg-primary text-white hover:bg-primary-dark'
+          }`}
       >
         {isOpen ? (
           <FaTimes className="text-xl" />
         ) : (
-          <div className="text-xl">💬</div>
+          <MessageCircle className="w-6 h-6" />
         )}
-      </button>
 
-      {/* Contact Options Menu - Positioned Absolutely */}
-      <div className={`absolute bottom-full right-0 transition-all duration-300 ease-in-out ${
-        isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-      }`}>
-        <div className="mb-4 space-y-2">
-          {contacts.map((contact, index) => {
-            const IconComponent = contact.icon;
-            return (
-              <div
-                key={contact.id}
-                className={`transform transition-all duration-300 ease-out ${
-                  isOpen 
-                    ? 'translate-y-0 opacity-100' 
-                    : 'translate-y-4 opacity-0'
-                }`}
-                style={{ 
-                  transitionDelay: isOpen ? `${index * 50}ms` : '0ms' 
-                }}
-              >
-                <div className="flex items-center justify-end space-x-3 group">
-                  {/* Label */}
-                  <div className="bg-white text-gray-800 px-3 py-2 rounded-lg shadow-lg border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-sm font-medium whitespace-nowrap">
-                    {contact.label}
-                  </div>
-                  
-                  {/* Button */}
-                  <button
-                    onClick={contact.action}
-                    className={`${contact.color} text-white rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-opacity-50 focus:ring-offset-2 focus:ring-offset-white`}
-                    aria-label={contact.label}
-                  >
-                    <IconComponent className="text-lg" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+        {!isOpen && (
+          <motion.span
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="absolute -top-1 -right-1 w-4 h-4 bg-white dark:bg-gray-900 border-2 border-primary rounded-full"
+          />
+        )}
+      </motion.button>
 
-      {/* Background Overlay for Mobile */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-20 -z-10 md:hidden"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
+      {/* Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm -z-10 md:hidden"
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

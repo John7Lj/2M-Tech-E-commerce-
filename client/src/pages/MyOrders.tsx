@@ -26,7 +26,7 @@ const MyOrders: React.FC = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-blue-100">
+                            <tr className="bg-primary/5 font-black uppercase tracking-widest text-[10px]">
                                 <th className="p-4 text-sm md:text-base">Order ID</th>
                                 <th className="p-4 text-sm md:text-base">Date</th>
                                 <th className="p-4 text-sm md:text-base">Status</th>
@@ -39,11 +39,11 @@ const MyOrders: React.FC = () => {
                                 <tr className="border-b hover:bg-gray-100" key={order._id}>
                                     <td className="p-4 text-sm md:text-base">{order._id}</td>
                                     <td className="p-4 text-sm md:text-base">{new Date(order.createdAt).toLocaleDateString()}</td>
-                                    <td className="p-4 text-sm md:text-base">{order.status  }</td>
+                                    <td className="p-4 text-sm md:text-base">{order.status}</td>
                                     <td className="p-4 text-sm md:text-base">${order.total.toFixed(2)}</td>
                                     <td className="p-4">
                                         <button
-                                            className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm md:text-base hover:bg-blue-600 transition"
+                                            className="bg-primary text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-dark transition-all shadow-xl shadow-primary/20"
                                             onClick={() => navigate(`/order/${order._id}`)}
                                         >
                                             View Details

@@ -20,16 +20,17 @@ const AddProduct: React.FC = () => {
   const { data: brandsData, isLoading: brandsLoading } = useGetBrandsForDropdownQuery();
   const [createProduct, { isLoading: isCreating }] = useNewProductMutation();
 
-  const { 
-    formData, 
-    handleInputChange, 
-    handleCategoryChange, 
+  const {
+    formData,
+    handleInputChange,
+    handleCategoryChange,
     handleSubcategoryChange,
     handleDescriptionChange,
     handleStatusChange, // Add this
-    resetForm 
+    handleFeaturedChange, // Add this
+    resetForm
   } = useProductForm();
-  
+
   const {
     photos,
     photoPreviews,
@@ -81,17 +82,18 @@ const AddProduct: React.FC = () => {
     const submitFormData = new FormData();
     submitFormData.append('name', data.name.trim());
     submitFormData.append('categories', JSON.stringify(data.categories));
-    
+
     if (data.subcategories.length > 0) {
       submitFormData.append('subcategories', JSON.stringify(data.subcategories));
     }
-    
+
     submitFormData.append('brand', data.brand);
     submitFormData.append('description', data.description.trim());
     submitFormData.append('stock', data.stock.toString());
     submitFormData.append('price', data.price.toString());
     submitFormData.append('discount', data.discount.toString());
     submitFormData.append('status', data.status.toString());
+    submitFormData.append('featured', data.featured.toString());
     submitFormData.append('mainPhotoIndex', mainPhotoIndex.toString());
 
     photos.forEach(photo => {
@@ -101,7 +103,7 @@ const AddProduct: React.FC = () => {
     try {
       await createProduct({ formData: submitFormData }).unwrap();
       notify('Product created successfully', 'success');
-      
+
       resetForm();
       resetImages();
     } catch (error) {
@@ -115,15 +117,15 @@ const AddProduct: React.FC = () => {
   const brands = brandsData?.brands || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <ProductHeader />
 
         {/* Main Photo Display */}
         {photoPreviews.length > 0 && (
-          <MainPhotoDisplay 
-            photoPreview={photoPreviews[mainPhotoIndex]} 
+          <MainPhotoDisplay
+            photoPreview={photoPreviews[mainPhotoIndex]}
           />
         )}
 
@@ -153,6 +155,7 @@ const AddProduct: React.FC = () => {
           onSubcategoryChange={handleSubcategoryChange}
           onDescriptionChange={handleDescriptionChange}
           onStatusChange={handleStatusChange} // Add this
+          onFeaturedChange={handleFeaturedChange} // Add this
           onImageChange={handleImageChange}
           onSubmit={handleSubmit}
         />

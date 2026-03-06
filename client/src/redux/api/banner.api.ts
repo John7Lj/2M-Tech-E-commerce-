@@ -41,8 +41,8 @@ export const bannerApi = createApi({
   reducerPath: 'bannerAPI',
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_SERVER_URL 
-      ? `${import.meta.env.VITE_SERVER_URL}/api/v1/banners`
-      : `/api/v1/banners`,
+      ? `${import.meta.env.VITE_SERVER_URL}/banners`
+      : `/banners`,
     credentials: 'include',
   }),
   tagTypes: ['Banner'],

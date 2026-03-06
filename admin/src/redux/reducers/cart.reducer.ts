@@ -13,7 +13,6 @@ const safeParseLocalStorage = (key: string, defaultValue: any) => {
         }
         return parsed;
     } catch (error) {
-        console.warn(`Error parsing localStorage key "${key}":`, error);
         return defaultValue;
     }
 };
@@ -67,7 +66,7 @@ export const cartReducer = createSlice({
                 // If the item already exists in the cart, increment its quantity
                 // Limit the quantity to the stock available
                 state.cartItems[index].quantity = Math.min(
-                    state.cartItems[index].quantity + action.payload.quantity, 
+                    state.cartItems[index].quantity + action.payload.quantity,
                     action.payload.stock
                 );
             } else {
@@ -80,14 +79,14 @@ export const cartReducer = createSlice({
         },
         removeCartItem: (state, action: PayloadAction<string>) => {
             state.loading = true;
-            
+
             // Ensure cartItems is always an array
             if (!Array.isArray(state.cartItems)) {
                 state.cartItems = [];
             } else {
                 state.cartItems = state.cartItems.filter(item => item.productId !== action.payload);
             }
-            
+
             state.loading = false;
             saveToLocalStorage(state);
         },
@@ -132,7 +131,7 @@ export const cartReducer = createSlice({
             state.shippingCharges = state.cartItems.length > 0 ? 50 : 0;
             state.tax = 0;
             state.total = state.subTotal + state.shippingCharges - state.discount;
-            
+
             // If the discount is greater than the total price, limit the discount to the total price
             if (state.total < 0) {
                 state.discount = state.subTotal + state.shippingCharges;
@@ -158,7 +157,7 @@ export const cartReducer = createSlice({
             } catch (error) {
                 console.warn('Error clearing localStorage:', error);
             }
-            
+
             // Reset to initial state
             state.loading = false;
             state.cartItems = [];
@@ -172,15 +171,15 @@ export const cartReducer = createSlice({
     }
 });
 
-export const { 
-    addToCart, 
-    removeCartItem, 
-    incrementCartItem, 
-    decrementCartItem, 
-    calculatePrice, 
-    discountApplied, 
-    resetCart, 
-    saveShippingInfo 
+export const {
+    addToCart,
+    removeCartItem,
+    incrementCartItem,
+    decrementCartItem,
+    calculatePrice,
+    discountApplied,
+    resetCart,
+    saveShippingInfo
 } = cartReducer.actions;
 
 export default cartReducer.reducer;

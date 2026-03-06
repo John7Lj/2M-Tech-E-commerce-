@@ -28,7 +28,7 @@ const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const hasActiveFilters = 
+  const hasActiveFilters =
     filters.selectedBrands.length > 0 ||
     filters.selectedCategories.length > 0 ||
     filters.selectedSubcategories.length > 0 ||
@@ -37,7 +37,7 @@ const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
     filters.priceRange[0] > 0 ||
     filters.priceRange[1] < maxPrice;
 
-  const activeFilterCount = 
+  const activeFilterCount =
     filters.selectedBrands.length +
     filters.selectedCategories.length +
     filters.selectedSubcategories.length +
@@ -54,15 +54,15 @@ const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
       {/* Mobile Filter Sidebar Tab - Always visible on mobile */}
       <div className="lg:hidden">
         {/* Filter Tab */}
-        <div 
-          className={`fixed left-0 top-1/2 transform -translate-y-1/2 z-40 transition-all duration-300 ${
-            isOpen ? 'translate-x-0' : '-translate-x-2'
-          }`}
+        <div
+          className={`fixed left-0 top-1/2 transform -translate-y-1/2 z-40 transition-all duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-2'
+            }`}
         >
           <button
             onClick={() => setIsOpen(true)}
-            className="bg-purple-600 text-white p-3 rounded-r-2xl shadow-lg hover:bg-purple-700 transition-all duration-300 flex items-center space-x-2 min-w-[120px] relative overflow-hidden"
+            className="bg-primary text-white p-3 rounded-r-2xl shadow-xl hover:bg-primary-dark transition-all duration-300 flex items-center space-x-2 min-w-[120px] relative overflow-hidden group"
           >
+            <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500" />
             <div className="relative">
               <Filter className="w-5 h-5" />
               {hasActiveFilters && (
@@ -73,13 +73,9 @@ const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                 </div>
               )}
             </div>
-            <div className="text-left">
-              <div className="text-sm font-semibold">Filters</div>
-              {hasActiveFilters && (
-                <div className="text-xs opacity-90">
-                  {activeFilterCount} active
-                </div>
-              )}
+            <div className="text-left relative z-10">
+              <div className="text-[10px] font-black uppercase tracking-widest opacity-80">Refine</div>
+              <div className="text-sm font-black uppercase tracking-tight">Filters</div>
             </div>
           </button>
         </div>
@@ -87,30 +83,28 @@ const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
         {/* Drawer */}
         <div className={`fixed inset-0 z-50 ${isOpen ? 'block' : 'hidden'}`}>
           {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300"
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setIsOpen(false)}
           />
-          
+
           {/* Sidebar */}
-          <div className={`absolute left-0 top-0 h-full w-full max-w-sm bg-white shadow-xl transform transition-transform duration-300 ease-out ${
-            isOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}>
+          <div className={`absolute left-0 top-0 h-full w-full max-w-[320px] bg-white dark:bg-secondary-dark shadow-2xl transform transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}>
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-purple-100">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-secondary-dark">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-                  <Filter className="w-5 h-5 text-purple-600" />
+                <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tighter flex items-center space-x-3">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Filter className="w-5 h-5 text-primary" />
+                  </div>
                   <span>Filters</span>
                 </h2>
-                <p className="text-sm text-gray-600">
-                  {totalResults} products found
-                  {hasActiveFilters && (
-                    <span className="ml-2 text-purple-600 font-medium">
-                      • {activeFilterCount} filter{activeFilterCount !== 1 ? 's' : ''} active
-                    </span>
-                  )}
-                </p>
+                {hasActiveFilters && (
+                  <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-2">
+                    {activeFilterCount} Active Refinements
+                  </p>
+                )}
               </div>
               <button
                 onClick={() => setIsOpen(false)}
@@ -136,7 +130,7 @@ const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
             </div>
 
             {/* Footer */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-lg">
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-white dark:bg-secondary-dark border-t border-gray-100 dark:border-gray-800 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
               <div className="flex space-x-3">
                 {hasActiveFilters && (
                   <button
@@ -158,12 +152,12 @@ const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                 )}
                 <button
                   onClick={handleApplyFilters}
-                  className={`${hasActiveFilters ? 'flex-1' : 'w-full'} bg-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center space-x-2`}
+                  className={`${hasActiveFilters ? 'flex-1' : 'w-full'} bg-primary text-white py-4 px-6 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary-dark transition-all flex items-center justify-center space-x-3 shadow-xl shadow-primary/20`}
                 >
-                  <span>Apply Filters</span>
-                  <span className="bg-purple-500 text-white px-2 py-0.5 rounded-full text-sm">
+                  <span>See Results</span>
+                  <div className="bg-white/20 px-2 py-0.5 rounded-lg text-[10px]">
                     {totalResults}
-                  </span>
+                  </div>
                 </button>
               </div>
             </div>

@@ -22,6 +22,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   onImageChange,
   onDescriptionChange,
   onStatusChange, // New prop
+  onFeaturedChange, // New prop
   onSubmit
 }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -52,6 +53,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
           onInputChange={onInputChange}
           onDescriptionChange={onDescriptionChange}
           onStatusChange={onStatusChange} // Pass the new handler
+          onFeaturedChange={onFeaturedChange} // Pass the new handler
         />
 
         {/* Images Upload Section */}
@@ -70,7 +72,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             <button
               type="submit"
               disabled={isLoading || categoriesLoading || subcategoriesLoading || brandsLoading}
-              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {isLoading ? (
                 <>

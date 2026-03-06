@@ -9,7 +9,7 @@ const AdminCoupons: React.FC = () => {
     const [deleteCoupon] = useDeleteCouponMutation();
     const [code, setCode] = useState('');
     const [amount, setAmount] = useState<number | string>('');
-    const {currencySymbol} = useConstants();
+    const { currencySymbol } = useConstants();
 
     const handleCreateCoupon = async () => {
         if (!code || !amount) {
@@ -30,7 +30,6 @@ const AdminCoupons: React.FC = () => {
 
     const handleDeleteCoupon = async (id: string) => {
         try {
-            console.log(id, 'id');
             await deleteCoupon(id).unwrap();
             notify('Coupon deleted successfully', 'success');
             refetch();
@@ -54,18 +53,18 @@ const AdminCoupons: React.FC = () => {
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
                         placeholder="Coupon Code"
-                        className="border p-3 rounded-md w-full md:w-auto"
+                        className="border p-3 rounded-md w-full md:w-auto focus:ring-2 focus:ring-primary focus:outline-none"
                     />
                     <input
                         type="number"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                         placeholder="Amount"
-                        className="border p-3 rounded-md w-full md:w-auto"
+                        className="border p-3 rounded-md w-full md:w-auto focus:ring-2 focus:ring-primary focus:outline-none"
                     />
                     <button
                         onClick={handleCreateCoupon}
-                        className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition duration-300"
+                        className="bg-primary text-white px-6 py-3 rounded-md hover:bg-primary-dark transition duration-300 shadow-sm hover:shadow-md"
                     >
                         Create Coupon
                     </button>
@@ -78,13 +77,13 @@ const AdminCoupons: React.FC = () => {
                     <p>No coupons available</p>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white border border-gray-300 rounded-lg">
-                            <thead className="bg-gray-100">
+                        <table className="min-w-full bg-white border border-gray-300 rounded-lg overflow-hidden">
+                            <thead className="bg-primary text-white">
                                 <tr>
                                     <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Code</th>
                                     <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
                                     <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Created Date</th>
-                                    <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                                    <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

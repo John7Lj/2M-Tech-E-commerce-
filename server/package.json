@@ -7,7 +7,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --config jest.config.ts --forceExit --detectOpenHandles",
     "start": "node build/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
     "build": "tsc -p .",
@@ -41,12 +41,11 @@
     "firebase-admin": "^12.1.1",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "long": "^5.2.3",
+    "mongodb-memory-server": "^11.0.1",
     "mongoose": "^8.4.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
-    "node-cron": "^4.2.1",
     "path": "^0.12.7",
     "stripe": "^15.10.0",
     "typescript": "^5.0.0",
@@ -54,7 +53,12 @@
     "winston": "^3.13.0"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/supertest": "^7.2.0",
+    "jest": "^30.2.0",
     "nodemon": "^3.1.2",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2"
   }
 }

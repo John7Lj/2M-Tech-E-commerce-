@@ -22,11 +22,11 @@ const storage = new CloudinaryStorage({
 });
 
 // Configure multer with file validation
-const upload = multer({ 
+const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 10 * 1024 * 1024, // 5MB limit
-        files: 10 // Maximum 5 files
+        fileSize: 10 * 1024 * 1024, // 10MB limit
+        files: 10 // Maximum 10 files
     },
     fileFilter: (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
         // Check file type
@@ -44,7 +44,6 @@ const uploadImage = (fieldName: string) => {
         const uploadSingle = upload.single(fieldName);
         uploadSingle(req, res, (err: any) => {
             if (err) {
-                console.error('Single image upload error:', err);
                 return next(new ApiError(400, err.message || 'Image upload failed'));
             }
             next();
@@ -58,9 +57,8 @@ const uploadMultipleImages = (fieldName: string, maxCount: number = 10) => {
         const uploadMultiple = upload.array(fieldName, maxCount);
         uploadMultiple(req, res, (err: any) => {
             if (err) {
-                console.error('Multiple images upload error:', err);
                 let errorMessage = 'Images upload failed';
-                
+
                 if (err.code === 'LIMIT_FILE_SIZE') {
                     errorMessage = 'File size too large. Maximum 10MB per file.';
                 } else if (err.code === 'LIMIT_FILE_COUNT') {
@@ -68,14 +66,10 @@ const uploadMultipleImages = (fieldName: string, maxCount: number = 10) => {
                 } else if (err.code === 'LIMIT_UNEXPECTED_FILE') {
                     errorMessage = 'Unexpected file field name.';
                 }
-                
+
                 return next(new ApiError(400, errorMessage));
             }
-            
-            // Log successful upload for debugging
-            const files = req.files as Express.Multer.File[];
-            console.log(`Successfully received ${files?.length || 0} files for upload`);
-            
+
             next();
         });
     };
@@ -84,11 +78,10 @@ const uploadMultipleImages = (fieldName: string, maxCount: number = 10) => {
 const deleteImage = async (publicId: string) => {
     try {
         if (publicId) {
-            const result = await cloudinary.uploader.destroy(publicId);
-            console.log(`Image deleted: ${publicId}`, result);
+            await cloudinary.uploader.destroy(publicId);
         }
     } catch (error) {
-        console.error('Error deleting image:', error);
+        // Silently fail — image cleanup is best-effort
     }
 };
 
@@ -97,20 +90,32 @@ const deleteMultipleImages = async (publicIds: string[]) => {
         if (publicIds && publicIds.length > 0) {
             const deletePromises = publicIds.map(async (id) => {
                 try {
-                    const result = await cloudinary.uploader.destroy(id);
-                    console.log(`Image deleted: ${id}`, result);
-                    return result;
-                } catch (error) {
-                    console.error(`Error deleting image ${id}:`, error);
+                    return await cloudinary.uploader.destroy(id);
+                } catch {
                     return null;
                 }
             });
-            
+
             await Promise.allSettled(deletePromises);
         }
-    } catch (error) {
-        console.error('Error deleting multiple images:', error);
+    } catch {
+        // Silently fail — image cleanup is best-effort
     }
 };
 
-export { uploadImage, uploadMultipleImages, deleteImage, deleteMultipleImages };
+// Shared utility to extract Cloudinary public_id from URL
+const extractPublicId = (imageUrl: string): string | null => {
+    try {
+        const urlParts = imageUrl.split('/');
+        const uploadIndex = urlParts.indexOf('upload');
+        if (uploadIndex !== -1 && uploadIndex + 2 < urlParts.length) {
+            const publicIdWithExtension = urlParts.slice(uploadIndex + 2).join('/');
+            return publicIdWithExtension.replace(/\.[^/.]+$/, '');
+        }
+        return null;
+    } catch {
+        return null;
+    }
+};
+
+export { uploadImage, uploadMultipleImages, deleteImage, deleteMultipleImages, extractPublicId };

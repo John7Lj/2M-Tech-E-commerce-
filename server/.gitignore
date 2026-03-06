@@ -1,491 +1,107 @@
-server\src\index.ts
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
 
-import dotenv from 'dotenv';
-dotenv.config();
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-import cors from 'cors';
-import express, { Application, Request, Response, NextFunction } from 'express';
-import cookieParser from 'cookie-parser';
-import morgan from 'morgan';
-import helmet from 'helmet';
-import compression from 'compression';
-import rateLimit from 'express-rate-limit';
-import mongoSanitize from 'express-mongo-sanitize';
-import path from 'path';
-import fs from 'fs';
+# Dependency directories
+node_modules/
+jspm_packages/
 
-import connectDB from './config/db.config';
-import firebaseApp from './config/firebase.config';
+# TypeScript v1 declaration files
+typings/
 
-import authRoutes from './routes/auth.routes';
-import couponRoutes from './routes/coupon.routes';
-import orderRoutes from './routes/order.routes';
-import paymentRoutes from './routes/payment.routes';
-import productRoutes from './routes/product.route';
-import statsRoutes from './routes/stats.route';
+# TypeScript cache
+*.tsbuildinfo
 
-import { apiErrorMiddleware } from './utils/ApiError';
-import winston from 'winston';
-import telegramRoutes from './routes/telegram.routes';
-import categoryRoutes from './routes/category.routes.js';
+# Optional npm cache directory
+.npm
 
-// Initialize Firebase
-try {
-  firebaseApp.firestore();
-} catch (error) {
-  console.error('Firebase initialization error:', error);
-}
+# Optional eslint cache
+.eslintcache
 
-const app: Application = express();
+# Optional stylelint cache
+.stylelintcache
 
-const PORT = process.env.PORT || 8000;
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+# Optional microbundle cache
+.cache
+.parcel-cache
 
-// Connect to database with error handling
-connectDB().catch(error => {
-  console.error('Database connection failed:', error);
-  process.exit(1);
-});
+# Optional Next.js build output
+.next
+out
 
-// CORS configuration
-// CORS configuration - Updated for Vercel deployment
-// Enhanced CORS configuration - Replace the existing corsOptions in your index.ts
-const corsOptions = {
-  credentials: true,
-  origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
-    console.log('CORS Origin check:', origin);
-    
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'https://2-m-technology.vercel.app',
-      'https://2-m-technology-git-main-john7ljs-projects.vercel.app',
-      'https://2-m-technology-i0q9elm6m-john7ljs-projects.vercel.app',
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'http://localhost:5174',
-      process.env.CLIENT_URL,
-    ].filter(Boolean);
-    
-    // For development
-    if (process.env.NODE_ENV === 'development' && origin?.includes('localhost')) {
-      return callback(null, true);
-    }
-    
-    // For Vercel preview deployments
-    if (origin?.includes('vercel.app') && origin?.includes('2-m')) {
-      return callback(null, true);
-    }
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked origin:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: [
-    'Origin',
-    'X-Requested-With',
-    'Content-Type',
-    'Accept',
-    'Authorization',
-    'Cookie',
-    'Set-Cookie',
-    'Access-Control-Allow-Credentials'
-  ],
-  exposedHeaders: ['Set-Cookie'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204
-};
+# Optional Nuxt.js build output
+.nuxt
+dist
 
-// Apply CORS middleware
-app.use(cors(corsOptions));
+# Optional gatsby build output
+.cache
+public
 
-// Additional middleware for handling preflight requests
-app.use((req: Request, res: Response, next: NextFunction) => {
-  if (req.method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,PATCH,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin,X-Requested-With,Content-Type,Accept,Authorization,Cookie,Set-Cookie');
-    res.status(204).send();
-  } else {
-    next();
-  }
-});
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(cookieParser());
-app.use('/api/v1/categories', categoryRoutes);
+# Optional Deno env
+.env
+.env.test
+.env.production
 
-// Only use morgan in development
-if (process.env.NODE_ENV !== 'production') {
-  app.use(morgan('dev'));
-}
+# Optional Serverless Webpack directories
+.webpack/
 
-app.use(compression());
-app.use(mongoSanitize());
+# Optional folder for rebuilding native libraries
+.node-gyp/
 
-// Rate limiting - more lenient for production
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 200 : 100, // Higher limit for production
-  standardHeaders: true,
-  legacyHeaders: false,
-  skip: (req) => {
-    // Skip rate limiting for health checks
-    return req.path === '/health' || req.path === '/';
-  }
-});
-app.use('/api', limiter);
+# Optional instrumentation Core error dumps (https://nodejs.org/api/errors.html#errors_common_system_errors)
+core
 
-// Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV 
-  });
-});
+# Optional Deployed/build archives
+*.tgz
 
-// API routes
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/products', productRoutes);
-app.use('/api/v1/orders', orderRoutes);
-app.use('/api/v1/coupons', couponRoutes);
-app.use('/api/v1/payments', paymentRoutes);
-app.use('/api/v1/stats', statsRoutes);
-app.use('/api/v1/telegram', telegramRoutes);
+# Optional coverage directory used by tools like istanbul
+coverage
+*.lcov
 
-// Handle 404 for API routes
-app.use('/api/*', (req: Request, res: Response) => {
-  res.status(404).json({
-    success: false,
-    message: 'API endpoint not found'
-  });
-});
+# Optional nyc usage
+.nyc_output
 
-// Handle root route and static files
-if (process.env.NODE_ENV === 'production') {
-  const clientPath = path.join(__dirname, '../client/dist');
-  
-  // Check if client build directory exists
-  const clientExists = fs.existsSync(clientPath) && fs.existsSync(path.join(clientPath, 'index.html'));
-  
-  if (clientExists) {
-    console.log('Client build found, serving static files');
-    app.use(express.static(clientPath));
-    
-    // Handle client-side routing
-    app.get('*', (req: Request, res: Response) => {
-      // Don't serve index.html for API routes
-      if (req.path.startsWith('/api/')) {
-        return res.status(404).json({
-          success: false,
-          message: 'API endpoint not found'
-        });
-      }
-      res.sendFile(path.join(clientPath, 'index.html'));
-    });
-  } else {
-    console.log('Client build not found, serving API only');
-    // Root endpoint for API-only deployment
-    app.get('/', (req: Request, res: Response) => {
-      res.json({
-        success: true,
-        message: 'API is running... 🚀 [Production Mode - API Only]',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0',
-        endpoints: {
-          auth: '/api/v1/auth',
-          products: '/api/v1/products',
-          orders: '/api/v1/orders',
-          coupons: '/api/v1/coupons',
-          payments: '/api/v1/payments',
-          stats: '/api/v1/stats'
-        }
-      });
-    });
-    
-    // Catch-all for non-API routes in API-only mode
-    app.get('*', (req: Request, res: Response) => {
-      if (!req.path.startsWith('/api/')) {
-        res.status(404).json({
-          success: false,
-          message: 'This is an API-only deployment. Frontend not available.',
-          availableEndpoints: {
-            auth: '/api/v1/auth',
-            products: '/api/v1/products',
-            orders: '/api/v1/orders',
-            coupons: '/api/v1/coupons',
-            payments: '/api/v1/payments',
-            stats: '/api/v1/stats'
-          }
-        });
-      }
-    });
-  }
-} else {
-  app.get('/', (req: Request, res: Response) => {
-    res.json({
-      success: true,
-      message: 'API is running... 🚀 [Development Mode]',
-      timestamp: new Date().toISOString(),
-      endpoints: {
-        auth: '/api/v1/auth',
-        products: '/api/v1/products',
-        orders: '/api/v1/orders',
-        coupons: '/api/v1/coupons',
-        payments: '/api/v1/payments',
-        stats: '/api/v1/stats'
-      }
-    });
-  });
-}
+# Optional Grunt transient files (https://gruntjs.com/)
+.grunt
 
+# Optional Bower transient files (https://bower.io/)
+bower_components
 
+# Optional node-waf configuration
+.lock-wscript
 
-// Add this route in your server/src/index.ts after other routes
-app.get('/api/debug', (req: Request, res: Response) => {
-  res.json({
-    success: true,
-    message: 'Server is connected!',
-    timestamp: new Date().toISOString(),
-    headers: req.headers,
-    origin: req.get('origin'),
-    referer: req.get('referer')
-  });
-});
+# Optional apple/linux/windows system files
+.DS_Store
+Thumbs.db
 
+# Optional IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
 
+# Optional build directory
+dist/
+build/
+bin/
+obj/
 
-// Global error handling middleware
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  // Log error details
-  winston.error('Global error handler:', {
-    message: err.message,
-    stack: err.stack,
-    url: req.url,
-    method: req.method,
-    ip: req.ip
-  });
-  
-  // Don't leak error details in production
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || 'Internal Server Error',
-    ...(isDevelopment && { stack: err.stack })
-  });
-});
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-app.use(apiErrorMiddleware);
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
-  process.exit(0);
-});
-
-process.on('SIGINT', () => {
-  console.log('SIGINT received, shutting down gracefully');
-  process.exit(0);
-});
-
-// Only start server if not in Vercel environment
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV}`);
-  });
-
-
-
-
-
-
-
-
-
-// Add these debug routes to your server/src/index.ts (after other routes)
-
-// Test cookie functionality
-app.get('/api/test-cookie', (req: Request, res: Response) => {
-  const testValue = `test-${Date.now()}`;
-  
-  const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
-    maxAge: 1000 * 60 * 5, // 5 minutes
-    path: '/'
-  };
-  
-  res.cookie('testCookie', testValue, cookieOptions);
-  
-  res.json({
-    success: true,
-    message: 'Test cookie set',
-    cookieValue: testValue,
-    cookieOptions,
-    environment: process.env.NODE_ENV,
-    origin: req.get('origin'),
-    userAgent: req.get('user-agent')
-  });
-});
-
-// Check if cookies are received
-app.get('/api/check-cookie', (req: Request, res: Response) => {
-  res.json({
-    success: true,
-    cookies: req.cookies,
-    headers: {
-      cookie: req.get('cookie'),
-      origin: req.get('origin'),
-      referer: req.get('referer')
-    },
-    environment: process.env.NODE_ENV
-  });
-});
-
-// Test authentication flow
-app.post('/api/test-auth', (req: Request, res: Response) => {
-  const { testToken } = req.body;
-  
-  res.cookie('testAuthToken', testToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
-    maxAge: 1000 * 60 * 60, // 1 hour
-    path: '/'
-  });
-  
-  res.json({
-    success: true,
-    message: 'Test auth token set',
-    receivedToken: testToken,
-    environment: process.env.NODE_ENV
-  });
-});
-
-  
-}
-
-// Export for Vercel
-export default app;
-
-
-server\src\routes\category.routes.ts
-
-
-
-import express from 'express';
-import upload from '../middleware/upload.middleware.js';
-import { authenticateUser, adminOnly } from '../middleware/auth.middleware.js';
-import {
-  createCategory,
-  getAllCategories,
-  getAllCategoriesAdmin,
-  getCategory,
-  updateCategory,
-  deleteCategory,
-  permanentDeleteCategory
-} from '../controllers/category.controller.js';
-
-const router = express.Router();
-
-// Public routes
-router.get('/', getAllCategories);
-router.get('/:id', getCategory);
-
-// Admin routes
-router.use(authenticateUser, adminOnly); // Apply auth middleware to all routes below
-
-router.post('/', upload.single('image'), createCategory);
-router.get('/admin/all', getAllCategoriesAdmin);
-router.patch('/:id', upload.single('image'), updateCategory);
-router.delete('/:id', deleteCategory);
-router.delete('/:id/permanent', permanentDeleteCategory);
-
-export default router;
-
-server\src\models\category.model.ts
-import mongoose, { Document, Schema } from 'mongoose';
-
-export interface ICategory extends Document {
-  _id: string;
-  name: string;
-  nameAr: string;
-  value: string; // URL-friendly version (e.g., 'hard-disk')
-  description?: string;
-  image?: string;
-  bgColor?: string;
-  hoverColor?: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const categorySchema = new Schema<ICategory>({
-  name: {
-    type: String,
-    required: [true, 'Category name is required'],
-    trim: true,
-    maxlength: [50, 'Category name cannot exceed 50 characters']
-  },
-  nameAr: {
-    type: String,
-    required: [true, 'Arabic category name is required'],
-    trim: true,
-    maxlength: [50, 'Arabic category name cannot exceed 50 characters']
-  },
-  value: {
-    type: String,
-    required: [true, 'Category value is required'],
-    unique: true,
-    lowercase: true,
-    trim: true,
-    match: [/^[a-z0-9-]+$/, 'Category value must contain only lowercase letters, numbers, and hyphens']
-  },
-  description: {
-    type: String,
-    maxlength: [200, 'Description cannot exceed 200 characters'],
-    trim: true
-  },
-  image: {
-    type: String,
-    default: null
-  },
-  bgColor: {
-    type: String,
-    default: 'bg-gradient-to-br from-blue-500 to-blue-600'
-  },
-  hoverColor: {
-    type: String,
-    default: 'hover:from-blue-600 hover:to-blue-700'
-  },
-  isActive: {
-    type: Boolean,
-    default: true
-  }
-}, {
-  timestamps: true
-});
-
-// Create URL-friendly value from name
-categorySchema.pre('save', function(next) {
-  if (this.isNew || this.isModified('name')) {
-    this.value = this.name
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single
-      .trim();
-  }
-  next();
-});
-
-export const Category = mongoose.model<ICategory>('Category', categorySchema);
+# Vercel
+.vercel

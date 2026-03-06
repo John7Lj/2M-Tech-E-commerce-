@@ -32,14 +32,19 @@
     width: 40px;
     height: 40px;
     border: 4px solid #f3f3f3;
-    border-top: 4px solid #007bff;
+    border-top: 4px solid var(--primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Carousel Container */
@@ -69,7 +74,7 @@
     background: white;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     height: 400px;
     margin: 0 auto;
     max-width: 900px;
@@ -116,7 +121,7 @@
     color: #333;
     pointer-events: auto;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .nav-btn:hover {
@@ -162,7 +167,7 @@
 
 .product-price {
     font-size: 1.6rem;
-    color: #007bff;
+    color: var(--primary);
     font-weight: 800;
     margin-bottom: 1rem;
 }
@@ -180,7 +185,7 @@
 }
 
 .view-btn {
-    background: #007bff;
+    background: var(--primary);
     color: white;
     padding: 1rem 2rem;
     border-radius: 8px;
@@ -194,9 +199,9 @@
 }
 
 .view-btn:hover {
-    background: #0056b3;
+    background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
     color: white;
     text-decoration: none;
 }
@@ -218,7 +223,7 @@
 }
 
 .carousel .control-dots .dot.selected {
-    background: #007bff;
+    background: var(--primary);
     transform: scale(1.2);
 }
 
@@ -255,62 +260,62 @@
     .featured-section {
         padding: 1rem 0;
     }
-    
+
     .carousel-container {
         padding: 0 0.5rem;
     }
-    
+
     .carousel-slide {
         padding: 0 0.5rem;
     }
-    
+
     .product-slide {
         flex-direction: column;
         height: auto;
         min-height: 500px;
     }
-    
+
     .product-image {
         flex: none;
         height: 250px;
     }
-    
+
     .product-content {
         padding: 1.5rem;
         height: auto;
         min-height: 250px;
     }
-    
+
     .product-title {
         font-size: 1.5rem;
         margin-bottom: 0.75rem;
     }
-    
+
     .product-price {
         font-size: 1.4rem;
         margin-bottom: 0.75rem;
     }
-    
+
     .product-description {
         font-size: 0.95rem;
         margin-bottom: 1rem;
     }
-    
+
     .view-btn {
         padding: 0.75rem 1.5rem;
         font-size: 0.9rem;
     }
-    
+
     .section-header h2 {
         font-size: 1.8rem;
     }
-    
+
     .nav-btn {
         width: 35px;
         height: 35px;
         font-size: 1.2rem;
     }
-    
+
     .image-counter {
         padding: 0.25rem 0.75rem;
         font-size: 0.8rem;
@@ -321,15 +326,15 @@
     .product-content {
         padding: 1rem;
     }
-    
+
     .product-title {
         font-size: 1.3rem;
     }
-    
+
     .product-price {
         font-size: 1.2rem;
     }
-    
+
     .view-btn {
         width: 100%;
         text-align: center;
@@ -349,24 +354,28 @@
 .carousel .slide {
     background: transparent;
     padding: 0;
-    pointer-events: none; /* Disable pointer events on slide wrapper */
+    pointer-events: none;
+    /* Disable pointer events on slide wrapper */
 }
 
 .product-slide {
-    pointer-events: auto; /* Re-enable on actual content */
+    pointer-events: auto;
+    /* Re-enable on actual content */
 }
 
 .view-btn {
-    background: red !important;
-    border: 3px solid yellow !important;
+    background: var(--primary) !important;
     z-index: 9999 !important;
 }
 
 .product-actions {
     margin-top: auto;
-    position: relative;  /* Add this */
-    z-index: 50;         /* Add this */
-    pointer-events: auto; /* Add this */
+    position: relative;
+    /* Add this */
+    z-index: 50;
+    /* Add this */
+    pointer-events: auto;
+    /* Add this */
 }
 
 /* Add these CSS rules to your existing FeaturedSection.css file */
@@ -375,11 +384,13 @@
 .carousel .slide {
     background: transparent !important;
     padding: 0 !important;
-    pointer-events: none !important; /* Disable carousel slide interactions */
+    pointer-events: none !important;
+    /* Disable carousel slide interactions */
 }
 
 .product-slide {
-    pointer-events: auto !important; /* Re-enable on product content */
+    pointer-events: auto !important;
+    /* Re-enable on product content */
     position: relative;
     z-index: 1;
 }
@@ -393,21 +404,24 @@
 .product-actions {
     margin-top: auto;
     position: relative;
-    z-index: 999 !important; /* Higher z-index */
+    z-index: 999 !important;
+    /* Higher z-index */
     pointer-events: auto !important;
 }
 
 .view-btn {
-    background: #007bff !important;
+    background: var(--primary) !important;
     color: white !important;
     padding: 1rem 2rem;
-    border: none; /* Remove border for button */
+    border: none;
+    /* Remove border for button */
     border-radius: 8px;
     text-decoration: none;
     font-weight: 700;
     font-size: 1rem;
     display: inline-block;
-    transition: all 01s ease;
+    transition: all 0.3s ease;
+    /* Fixed timing */
     text-transform: uppercase;
     letter-spacing: 0.5px;
     position: relative;
@@ -422,15 +436,15 @@
 }
 
 .view-btn:hover {
-    background: #0056b3 !important;
+    background: var(--primary-dark) !important;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
     color: white !important;
     text-decoration: none;
 }
 
 .view-btn:focus {
-    outline: 2px solid #007bff;
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
 }
 
@@ -474,8 +488,7 @@
     color: #333;
     pointer-events: auto !important;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     z-index: 100;
     position: relative;
 }
-

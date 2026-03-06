@@ -60,8 +60,8 @@ const AdminCustomers: React.FC = () => {
             <p className="mb-6">Here you can view and manage customer information.</p>
             {users.length > 0 ? (
                 <div className="overflow-x-auto">
-                    <table {...getTableProps()} className="min-w-full bg-white border border-gray-300 rounded-lg">
-                        <thead className="bg-gray-100">
+                    <table {...getTableProps()} className="min-w-full bg-white border border-gray-300 rounded-lg overflow-hidden">
+                        <thead className="bg-primary text-white">
                             {headerGroups.map((headerGroup, headerGroupIndex) => {
                                 const { key: headerGroupKey, ...headerGroupProps } = headerGroup.getHeaderGroupProps();
                                 return (
@@ -72,7 +72,7 @@ const AdminCustomers: React.FC = () => {
                                                 <th
                                                     key={columnIndex}
                                                     {...columnProps}
-                                                    className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider"
+                                                    className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold uppercase tracking-wider"
                                                 >
                                                     {column.render('Header')}
                                                 </th>

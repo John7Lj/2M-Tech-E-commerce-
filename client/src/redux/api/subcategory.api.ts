@@ -34,7 +34,7 @@ const subcategoryApi = createApi({
   reducerPath: 'subcategoryApi',
   baseQuery: fetchBaseQuery({
     // FIXED: Changed from VITE_SERVER to VITE_SERVER_URL to match category.api.ts
-    baseUrl: `${import.meta.env.VITE_SERVER_URL}/api/v1/subcategory/`,
+    baseUrl: `${import.meta.env.VITE_SERVER_URL}/subcategory/`,
     credentials: 'include', // ADDED: Include credentials like in category API
   }),
   tagTypes: ['Subcategory'],

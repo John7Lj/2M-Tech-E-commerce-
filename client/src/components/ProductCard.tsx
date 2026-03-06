@@ -6,6 +6,7 @@ import { RootState } from '../redux/store';
 import { Product } from '../types/api-types';
 import { Eye, ShoppingCart, Plus, Minus } from 'lucide-react';
 import { useConstants } from '../hooks/useConstants';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProductCardProps {
   product: Product;
@@ -16,42 +17,35 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  
-  // Safe cart items handling
+
   const cartItems = useSelector((state: RootState) => state.cart.cartItems) || [];
   const safeCartItems = Array.isArray(cartItems) ? cartItems : [];
   const cartItem = safeCartItems.find(item => item.productId === product._id);
-  const {currencySymbol} = useConstants();
+  const { currencySymbol } = useConstants();
 
-  // Single image handling (first image only)
-  const primaryImage = product.photos && product.photos.length > 0 
-    ? product.photos[0] 
+  const primaryImage = product.photos && product.photos.length > 0
+    ? product.photos[0]
     : 'https://via.placeholder.com/300x300?text=No+Image';
 
-  // Stock status
   const isLowStock = product.stock > 0 && product.stock <= 5;
   const isOutOfStock = product.stock === 0;
 
-  // Helper functions for displaying data
   const hasDiscount = product.discount > 0;
   const discountPercentage = product.discount;
   const originalPrice = product.price;
   const finalPrice = product.netPrice || (originalPrice - (originalPrice * discountPercentage / 100));
 
-  // Format categories for display
   const getCategories = () => {
     if (!product.categories || product.categories.length === 0) return [];
-    
     return product.categories.map(cat => {
       if (typeof cat === 'string') return cat;
-      return cat.name || cat.value || '';
+      return (cat as any).name || (cat as any).value || '';
     }).filter(Boolean);
   };
 
-  // Format brand name
   const getBrandName = () => {
     if (typeof product.brand === 'object') {
-      return product.brand.name;
+      return (product.brand as any).name;
     }
     return product.brand || '';
   };
@@ -59,16 +53,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handleAddToCart = useCallback(async (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    
     if (isOutOfStock) return;
-    
     setIsAddingToCart(true);
-    
     setTimeout(() => {
       const cartItemData = {
         productId: product._id,
         name: product.name,
-        price: finalPrice, // Use net price for cart
+        price: finalPrice,
         quantity: 1,
         stock: product.stock,
         photo: primaryImage,
@@ -95,17 +86,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const handleNavigateToProduct = useCallback((event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
-    
-    if (
-      target.closest('button') || 
-      target.closest('[role="button"]') ||
-      target.closest('.quick-action-btn')
-    ) {
-      event.preventDefault();
-      event.stopPropagation();
+    if (target.closest('button') || target.closest('[role="button"]') || target.closest('.quick-action-btn')) {
       return;
     }
-    
     navigate(`/product/${product._id}`);
   }, [navigate, product._id]);
 
@@ -119,180 +102,163 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const brandName = getBrandName();
 
   return (
-    <div 
-      className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group border border-purple-100 cursor-pointer"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5 }}
+      className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-800 cursor-pointer flex flex-col h-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleNavigateToProduct}
     >
       {/* Image Container */}
-      <div className="aspect-square bg-purple-50 relative overflow-hidden">
+      <div className="aspect-[4/5] bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
         <img
           src={primaryImage}
           alt={product.name}
-          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
-            isOutOfStock ? 'grayscale opacity-75' : ''
-          }`}
+          className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-75' : ''
+            }`}
           loading="lazy"
         />
-        
-        {/* Discount Badge */}
-        {hasDiscount && !isOutOfStock && (
-          <div className="absolute top-3 left-3 bg-gray-600 text-cyan-500 px-6 py-1 rounded-lg text-xs font-bold">
-            -{discountPercentage}%
-          </div>
-        )}
-        {/* Featured Badge */}
-        {product.featured && !isOutOfStock && (
-          <div className={`absolute top-3 ${hasDiscount ? 'left-20' : 'left-3'} bg-purple-500 text-gray-200 px-2 py-1 rounded-lg text-xs font-medium`}>
-            FEATURED
-          </div>
-        )}
 
-        {/* Out of Stock Badge */}
-        {isOutOfStock && (
-          <div className="absolute top-3 left-3 bg-red-600 text-white px-2 py-1 rounded-lg text-xs font-medium">
-            SOLD OUT
-          </div>
-        )}
-
-        {/* Low Stock Badge */}
-        {isLowStock && !isOutOfStock && (
-          <div className="absolute top-3 right-3 bg-orange-500 text-white px-2 py-1 rounded-lg text-xs font-medium">
-            {product.stock} left
-          </div>
-        )}
-
-        {/* Quick View Button */}
-        <div className={`absolute top-3 right-3 transition-all duration-300 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        } ${isLowStock && !isOutOfStock ? 'top-10' : ''}`}>
-          <button
-            onClick={handleQuickView}
-            className="quick-action-btn w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors duration-200 shadow-md"
-          >
-            <Eye className="w-4 h-4" />
-          </button>
+        {/* Badges */}
+        <div className="absolute top-3 left-3 flex flex-col gap-2">
+          {hasDiscount && !isOutOfStock && (
+            <div className="bg-primary text-white px-3 py-1 rounded-full text-[10px] font-bold shadow-lg">
+              -{discountPercentage}%
+            </div>
+          )}
+          {product.featured && !isOutOfStock && (
+            <div className="bg-gray-900/80 dark:bg-white/90 text-white dark:text-gray-900 px-3 py-1 rounded-full text-[10px] font-bold backdrop-blur-sm">
+              FEATURED
+            </div>
+          )}
         </div>
+
+        {isOutOfStock ? (
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center">
+            <span className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl">
+              SOLD OUT
+            </span>
+          </div>
+        ) : isLowStock && (
+          <div className="absolute top-3 right-3 bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400 px-3 py-1 rounded-full text-[10px] font-bold border border-red-100 dark:border-red-800">
+            ONLY {product.stock} LEFT
+          </div>
+        )}
+
+        {/* Quick View */}
+        {!isOutOfStock && (
+          <div className={`absolute inset-0 bg-black/20 flex items-center justify-center transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'
+            }`}>
+            <button
+              onClick={handleQuickView}
+              className="quick-action-btn w-12 h-12 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-900 dark:text-white hover:bg-primary hover:text-white transition-all shadow-xl"
+            >
+              <Eye className="w-5 h-5" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Product Details */}
-      <div className="p-3 sm:p-4">
-        {/* Brand Name */}
+      <div className="p-4 flex flex-col flex-1">
+        {/* Brand */}
         {brandName && (
-          <div className="text-xs text-gray-500 mb-1 font-medium uppercase tracking-wide">
+          <span className="text-[10px] font-bold text-primary dark:text-primary-light uppercase tracking-widest mb-1.5 block">
             {brandName}
-          </div>
+          </span>
         )}
 
-        {/* Product Name */}
-       <div className="font-bold text-gray-800 mb-3 line-clamp-2 text-lg sm:text-lg" > {product.name} </div>
-      
+        {/* Name */}
+        <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-2 line-clamp-2 text-sm leading-tight h-10">
+          {product.name}
+        </h3>
+
         {/* Categories */}
-        {categories.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-2">
-            {categories.slice(0, 2).map((category, index) => (
-              <span
-                key={index}
-                className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full"
-              >
-                {category}
-              </span>
-            ))}
-            {categories.length > 2 && (
-              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                +{categories.length - 2}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Price Section */}
-        <div className="mb-3">
-          {hasDiscount ? (
-            <div className="space-y-1">
-              {/* Net Price (After Discount) */}
-              <div className="flex items-center gap-2">
-                <span className="text-lg sm:text-xl font-bold text-red-600">
-                   {currencySymbol} {finalPrice.toLocaleString()}
-                </span>
-                <span className="text-xs bg-red-100 text-green-700 px-2 py-1 rounded-full font-medium">
-                  Save {discountPercentage}%
-                </span>
-              </div>
-              
-              {/* Original Price (Strikethrough) */}
-              <div className="text-sm text-gray-500 line-through">
-                 {currencySymbol} {originalPrice.toLocaleString()}
-              </div>
-              
-              {/* Savings Amount */}
-              <div className="text-xs text-green-600 font-medium">
-                You save  {currencySymbol} {(originalPrice - finalPrice).toLocaleString()}
-              </div>
-            </div>
-          ) : (
-            <span className="text-lg sm:text-xl font-light text-purple-900">
-               {currencySymbol} {finalPrice.toLocaleString()}
+        <div className="flex flex-wrap gap-1 mb-4 h-6 overflow-hidden">
+          {categories.slice(0, 2).map((category, index) => (
+            <span
+              key={index}
+              className="text-[10px] bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-md"
+            >
+              {category}
             </span>
-          )}
+          ))}
         </div>
 
-        {/* Cart Section */}
-        <div className="space-y-2">
-          {cartItem && cartItem.quantity > 0 ? (
-            <div className="flex items-center justify-between bg-purple-50 rounded-lg p-2">
-              <button
-                onClick={handleDecrement}
-                className="w-8 h-8 bg-white rounded-md shadow-sm flex items-center justify-center text-purple-600 hover:bg-red-500 hover:text-white transition-colors duration-200 flex-shrink-0"
-              >
-                <Minus className="w-3 h-3" />
-              </button>
-              
-              <span className="font-semibold text-purple-800 px-2 text-sm flex-shrink-0">{cartItem.quantity}</span>
-              
-              <button
-                onClick={handleIncrement}
-                disabled={cartItem.quantity >= product.stock}
-                className="w-8 h-8 bg-white rounded-md shadow-sm flex items-center justify-center text-purple-600 hover:bg-green-500 hover:text-white transition-colors duration-200 disabled:opacity-50 flex-shrink-0"
-              >
-                <Plus className="w-3 h-3" />
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={handleAddToCart}
-              disabled={isOutOfStock || isAddingToCart}
-              className={`w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isOutOfStock
-                  ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                  : isAddingToCart
-                  ? 'bg-purple-500 text-white cursor-wait'
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
-            >
-              {isAddingToCart ? (
-                <>
-                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-xs sm:text-sm">Adding...</span>
-                </>
-              ) : isOutOfStock ? (
-                <span className="text-xs sm:text-sm">Out of Stock</span>
-              ) : (
-                <>
-                  <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm whitespace-nowrap">Add to Cart</span>
-                </>
+        {/* Price & Cart Section */}
+        <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
+          <div className="flex items-end justify-between mb-4">
+            <div className="flex flex-col">
+              {hasDiscount && (
+                <span className="text-[10px] text-gray-400 line-through mb-0.5">
+                  {currencySymbol}{originalPrice.toLocaleString()}
+                </span>
               )}
+              <span className="text-lg font-black text-gray-900 dark:text-white">
+                {currencySymbol}{finalPrice.toLocaleString()}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <AnimatePresence mode="wait">
+              {cartItem && cartItem.quantity > 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="flex flex-1 items-center justify-between bg-accent dark:bg-gray-800 rounded-xl p-1 border border-gray-100 dark:border-gray-700"
+                >
+                  <button
+                    onClick={handleDecrement}
+                    className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-primary transition-colors"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="text-sm font-bold dark:text-white">{cartItem.quantity}</span>
+                  <button
+                    onClick={handleIncrement}
+                    disabled={cartItem.quantity >= product.stock}
+                    className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-primary transition-colors disabled:opacity-30"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </motion.div>
+              ) : (
+                <button
+                  onClick={handleAddToCart}
+                  disabled={isOutOfStock || isAddingToCart}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all ${isOutOfStock
+                    ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
+                    : isAddingToCart
+                      ? 'bg-primary/20 text-primary cursor-wait'
+                      : 'bg-primary text-white hover:bg-primary-dark shadow-md hover:shadow-primary/20'
+                    }`}
+                >
+                  {isAddingToCart ? (
+                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-4 h-4" />
+                      <span>{isOutOfStock ? 'OUT OF STOCK' : 'ADD TO CART'}</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </AnimatePresence>
+
+            <button
+              onClick={(e) => { e.stopPropagation(); navigate(`/product/${product._id}`); }}
+              className="w-11 h-11 flex items-center justify-center bg-accent dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <Eye className="w-5 h-5" />
             </button>
-          )}
-          
-          <div className="bg-purple-100 text-purple-700 px-3 py-2 rounded-lg text-sm text-center hover:bg-purple-200 transition-colors cursor-pointer">
-            View Details
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

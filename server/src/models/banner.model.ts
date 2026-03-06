@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 
 export interface IBannerProduct {
   product: mongoose.Types.ObjectId;
-  discountPercentage: number; // Custom discount for this product in this banner
+  discountPercentage: number;
+  originalDiscount: number; // Product's discount before the banner was applied
 }
 
 export interface IBanner {
@@ -30,6 +31,10 @@ const bannerProductSchema = new mongoose.Schema({
     min: 0,
     max: 100,
     default: 0
+  },
+  originalDiscount: {
+    type: Number,
+    default: 0 // Stores the product's discount before this banner was applied
   }
 }, { _id: false });
 

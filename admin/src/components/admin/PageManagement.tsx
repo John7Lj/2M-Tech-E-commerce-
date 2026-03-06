@@ -7,6 +7,7 @@ import {
 } from '../../redux/api/page.api';
 import { Search, Plus, Edit2, Trash2, Eye, EyeOff, Save, X, FileText, Globe, Calendar } from 'lucide-react';
 import WysiwygEditor from '../common/WysiwygEditor/WysiwygEditor';
+import { notify } from '../../utils/util';
 
 interface Page {
   _id?: string;
@@ -40,23 +41,23 @@ const PageManagement: React.FC = () => {
   // Validation function
   const validateForm = useCallback(() => {
     const errors: Partial<Page> = {};
-    
+
     if (!formData.title.trim()) {
       errors.title = 'Title is required';
     }
-    
+
     if (!formData.slug.trim()) {
       errors.slug = 'Slug is required';
     } else if (!/^[a-z0-9-]+$/.test(formData.slug)) {
       errors.slug = 'Slug must contain only lowercase letters, numbers, and hyphens';
     }
-    
+
     // Check if content has actual text (not just HTML tags)
     const textContent = formData.content.replace(/<[^>]*>/g, '').trim();
     if (!textContent) {
       errors.content = 'Content is required';
     }
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   }, [formData]);
@@ -74,11 +75,11 @@ const PageManagement: React.FC = () => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     try {
       const pageData = {
         ...formData,
@@ -90,7 +91,7 @@ const PageManagement: React.FC = () => {
       } else {
         await createPage(pageData).unwrap();
       }
-      
+
       handleResetForm();
     } catch (error: any) {
       console.error('Error saving page:', error);
@@ -114,13 +115,13 @@ const PageManagement: React.FC = () => {
     const isConfirmed = window.confirm(
       `Are you sure you want to delete "${page.title}"?\n\nThis action cannot be undone.`
     );
-    
+
     if (isConfirmed) {
       try {
         await deletePage(page._id!).unwrap();
       } catch (error) {
         console.error('Error deleting page:', error);
-        alert('Failed to delete page. Please try again.');
+        notify('Failed to delete page. Please try again.', 'error');
       }
     }
   };
@@ -148,22 +149,22 @@ const PageManagement: React.FC = () => {
       ...prev,
       content
     }));
-    
+
     // Clear content error when user starts typing
     if (formErrors.content) {
       setFormErrors(prev => ({ ...prev, content: undefined }));
     }
   };
 
-  
+
 
   // Filter pages based on search and status
   const filteredPages = pages.filter(page => {
     const matchesSearch = page.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         page.slug.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || 
-                         (filterStatus === 'published' && page.isPublished) ||
-                         (filterStatus === 'draft' && !page.isPublished);
+      page.slug.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === 'all' ||
+      (filterStatus === 'published' && page.isPublished) ||
+      (filterStatus === 'draft' && !page.isPublished);
     return matchesSearch && matchesStatus;
   });
 
@@ -182,7 +183,7 @@ const PageManagement: React.FC = () => {
   // Helper to extract plain text from HTML content for preview
   const getContentPreview = (htmlContent: string, maxLength: number = 150) => {
     const textContent = htmlContent.replace(/<[^>]*>/g, '').trim();
-    return textContent.length > maxLength 
+    return textContent.length > maxLength
       ? textContent.substring(0, maxLength) + '...'
       : textContent;
   };
@@ -195,14 +196,14 @@ const PageManagement: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                <FileText className="w-8 h-8 text-blue-600" />
+                <FileText className="w-8 h-8 text-primary" />
                 Page Management
               </h1>
               <p className="text-gray-600 mt-1">Create and manage website pages with our professional editor</p>
             </div>
             <button
               onClick={() => setIsFormVisible(true)}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
+              className="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
             >
               <Plus className="w-4 h-4" />
               New Page
@@ -213,10 +214,10 @@ const PageManagement: React.FC = () => {
         {/* Create/Edit Form */}
         {isFormVisible && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
+            <div className="bg-gradient-to-r from-red-50 to-orange-50 p-6 border-b border-gray-200">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                  <Edit2 className="w-5 h-5 text-blue-600" />
+                  <Edit2 className="w-5 h-5 text-primary" />
                   {editingPage ? 'Edit Page' : 'Create New Page'}
                 </h2>
                 <button
@@ -227,7 +228,7 @@ const PageManagement: React.FC = () => {
                 </button>
               </div>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Title Field */}
@@ -240,11 +241,10 @@ const PageManagement: React.FC = () => {
                     placeholder="Enter page title (e.g., About Us, Privacy Policy)"
                     value={formData.title}
                     onChange={(e) => handleTitleChange(e.target.value)}
-                    className={`w-full border rounded-lg px-4 py-3 transition-colors duration-200 ${
-                      formErrors.title 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200'
-                    } focus:ring-2 focus:outline-none`}
+                    className={`w-full border rounded-lg px-4 py-3 transition-colors duration-200 ${formErrors.title
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
+                      : 'border-gray-300 focus:border-primary focus:ring-primary/20'
+                      } focus:ring-2 focus:outline-none`}
                     required
                   />
                   {formErrors.title && (
@@ -264,11 +264,10 @@ const PageManagement: React.FC = () => {
                       placeholder="url-friendly-name"
                       value={formData.slug}
                       onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                      className={`flex-1 border rounded-lg px-4 py-3 transition-colors duration-200 ${
-                        formErrors.slug 
-                          ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                          : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200'
-                      } focus:ring-2 focus:outline-none`}
+                      className={`flex-1 border rounded-lg px-4 py-3 transition-colors duration-200 ${formErrors.slug
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
+                        : 'border-gray-300 focus:border-primary focus:ring-primary/20'
+                        } focus:ring-2 focus:outline-none`}
                       required
                     />
                   </div>
@@ -286,9 +285,8 @@ const PageManagement: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Page Content *
                 </label>
-                <div className={`border rounded-lg ${
-                  formErrors.content ? 'border-red-300' : 'border-gray-300'
-                }`}>
+                <div className={`border rounded-lg ${formErrors.content ? 'border-red-300' : 'border-gray-300'
+                  }`}>
                   <WysiwygEditor
                     value={formData.content}
                     onChange={handleContentChange}
@@ -320,11 +318,11 @@ const PageManagement: React.FC = () => {
                     type="checkbox"
                     checked={formData.isPublished}
                     onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
                   />
                   <div className="flex items-center gap-2">
                     {formData.isPublished ? (
-                      <Eye className="w-4 h-4 text-green-600" />
+                      <Eye className="w-4 h-4 text-primary" />
                     ) : (
                       <EyeOff className="w-4 h-4 text-gray-400" />
                     )}
@@ -334,8 +332,8 @@ const PageManagement: React.FC = () => {
                   </div>
                 </label>
                 <p className="text-xs text-gray-500 mt-1 ml-7">
-                  {formData.isPublished 
-                    ? 'Page will be visible to website visitors' 
+                  {formData.isPublished
+                    ? 'Page will be visible to website visitors'
                     : 'Page will be saved but not visible to visitors'
                   }
                 </p>
@@ -346,12 +344,12 @@ const PageManagement: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isCreating || isUpdating}
-                  className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium flex-1 sm:flex-none"
+                  className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark disabled:bg-primary/50 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium flex-1 sm:flex-none"
                 >
                   <Save className="w-4 h-4" />
                   {isCreating || isUpdating ? 'Saving...' : (editingPage ? 'Update Page' : 'Create Page')}
                 </button>
-                
+
                 <button
                   type="button"
                   onClick={handleResetForm}
@@ -376,7 +374,7 @@ const PageManagement: React.FC = () => {
                 placeholder="Search pages by title or slug..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
               />
             </div>
 
@@ -386,7 +384,7 @@ const PageManagement: React.FC = () => {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as typeof filterStatus)}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none"
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
               >
                 <option value="all">All Pages</option>
                 <option value="published">Published Only</option>
@@ -405,11 +403,11 @@ const PageManagement: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="bg-gray-50 p-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <Globe className="w-5 h-5 text-blue-600" />
+              <Globe className="w-5 h-5 text-primary" />
               Website Pages
             </h2>
           </div>
-          
+
           {error && (
             <div className="p-6 text-center">
               <div className="text-red-600 bg-red-50 border border-red-200 rounded-lg p-4">
@@ -421,7 +419,7 @@ const PageManagement: React.FC = () => {
 
           {isLoading ? (
             <div className="p-12 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
               <p className="text-gray-600">Loading pages...</p>
             </div>
           ) : filteredPages.length === 0 ? (
@@ -431,15 +429,15 @@ const PageManagement: React.FC = () => {
                 {searchTerm || filterStatus !== 'all' ? 'No matching pages found' : 'No pages created yet'}
               </h3>
               <p className="text-gray-600 mb-6">
-                {searchTerm || filterStatus !== 'all' 
-                  ? 'Try adjusting your search or filter criteria' 
+                {searchTerm || filterStatus !== 'all'
+                  ? 'Try adjusting your search or filter criteria'
                   : 'Get started by creating your first page'
                 }
               </p>
               {!searchTerm && filterStatus === 'all' && (
                 <button
                   onClick={() => setIsFormVisible(true)}
-                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors duration-200"
                 >
                   <Plus className="w-4 h-4" />
                   Create Your First Page
@@ -458,11 +456,10 @@ const PageManagement: React.FC = () => {
                           {page.title}
                         </h3>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
-                            page.isPublished 
-                              ? 'bg-green-100 text-green-800 border border-green-200' 
-                              : 'bg-yellow-100 text-yellow-800 border border-yellow-200'
-                          }`}>
+                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${page.isPublished
+                            ? 'bg-primary/10 text-primary border border-primary/20'
+                            : 'bg-orange-100 text-orange-800 border border-orange-200'
+                            }`}>
                             {page.isPublished ? (
                               <>
                                 <Eye className="w-3 h-3" />
@@ -503,7 +500,7 @@ const PageManagement: React.FC = () => {
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <button
                         onClick={() => handleEdit(page)}
-                        className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-lg transition-colors duration-200 text-sm font-medium"
+                        className="flex items-center gap-1 bg-primary/5 hover:bg-primary/10 text-primary-dark px-3 py-2 rounded-lg transition-colors duration-200 text-sm font-medium"
                       >
                         <Edit2 className="w-4 h-4" />
                         Edit
@@ -529,11 +526,11 @@ const PageManagement: React.FC = () => {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-center gap-8 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-primary rounded-full"></div>
                 <span>{pages.filter(p => p.isPublished).length} Published</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-orange-400 rounded-full"></div>
                 <span>{pages.filter(p => !p.isPublished).length} Drafts</span>
               </div>
               <div className="flex items-center gap-2">

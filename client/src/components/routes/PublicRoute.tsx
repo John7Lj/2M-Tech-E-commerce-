@@ -6,8 +6,6 @@ import { RootState } from '../../redux/store';
 const PublicRoute: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
-  console.log("PublicRoute user:", user); // Debugging line
-
   return user ? <Navigate to="/" /> : <Outlet />;
 };
 

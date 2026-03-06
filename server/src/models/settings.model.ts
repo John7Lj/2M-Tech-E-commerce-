@@ -35,7 +35,7 @@ const SettingsSchema: Schema = new Schema({
     },
     logo: {
         type: String,
-        default: 'https://via.placeholder.com/200x80/6366f1/ffffff?text=LOGO'
+        default: ''
     },
     phone: {
         type: String,
@@ -91,7 +91,7 @@ const SettingsSchema: Schema = new Schema({
         type: String,
         default: ''
     },
-   
+
     timezone: {
         type: String,
         default: 'UTC'
@@ -100,8 +100,8 @@ const SettingsSchema: Schema = new Schema({
         type: String,
         default: 'en'
     },
-    
-    
+
+
 }, {
     timestamps: true
 });

@@ -31,16 +31,16 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
   // Filter subcategories based on selected categories
   useEffect(() => {
     if (formData.categories.length > 0) {
-      const filtered = subcategories.filter(sub => 
-        formData.categories.includes(sub.parentCategory._id)
+      const filtered = subcategories.filter(sub =>
+        sub.parentCategory && formData.categories.includes(sub.parentCategory._id)
       );
       setFilteredSubcategories(filtered);
-      
+
       // Remove subcategories that are no longer valid
       const validSubcategories = formData.subcategories.filter(subId =>
         filtered.some(sub => sub._id === subId)
       );
-      
+
       if (validSubcategories.length !== formData.subcategories.length) {
         onSubcategoryChange(validSubcategories);
       }
@@ -56,7 +56,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
     const updatedCategories = formData.categories.includes(categoryId)
       ? formData.categories.filter(id => id !== categoryId)
       : [...formData.categories, categoryId];
-    
+
     onCategoryChange(updatedCategories);
   };
 
@@ -64,19 +64,19 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
     const updatedSubcategories = formData.subcategories.includes(subcategoryId)
       ? formData.subcategories.filter(id => id !== subcategoryId)
       : [...formData.subcategories, subcategoryId];
-    
+
     onSubcategoryChange(updatedSubcategories);
   };
 
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-          <span className="text-blue-600 font-bold">1</span>
+        <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mr-3">
+          <span className="text-primary font-bold">1</span>
         </div>
         Basic Information
       </h2>
-      
+
       <div className="space-y-6">
         {/* Product Name */}
         <div className="space-y-2">
@@ -88,7 +88,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
             name="name"
             value={formData.name}
             onChange={onInputChange}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
             placeholder="Enter product name"
             required
           />
@@ -102,7 +102,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
               (Select one or more categories)
             </span>
           </label>
-          
+
           {categoriesLoading ? (
             <div className="text-center py-4 text-gray-500">⏳ Loading categories...</div>
           ) : categories.length === 0 ? (
@@ -120,7 +120,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
                     type="checkbox"
                     checked={formData.categories.includes(category._id)}
                     onChange={() => handleCategoryToggle(category._id)}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary"
                   />
                   <span className="text-sm font-medium text-gray-700">
                     {category.name}
@@ -129,7 +129,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
               ))}
             </div>
           )}
-          
+
           {formData.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-3">
               {formData.categories.map(categoryId => {
@@ -137,13 +137,13 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
                 return category ? (
                   <span
                     key={categoryId}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary"
                   >
                     {category.name}
                     <button
                       type="button"
                       onClick={() => handleCategoryToggle(categoryId)}
-                      className="ml-2 text-blue-600 hover:text-blue-800"
+                      className="ml-2 text-primary hover:text-primary-dark"
                     >
                       ×
                     </button>
@@ -163,7 +163,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
                 (Optional - Select relevant subcategories)
               </span>
             </label>
-            
+
             {subcategoriesLoading ? (
               <div className="text-center py-4 text-gray-500">⏳ Loading subcategories...</div>
             ) : filteredSubcategories.length === 0 ? (
@@ -181,7 +181,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
                       type="checkbox"
                       checked={formData.subcategories.includes(subcategory._id)}
                       onChange={() => handleSubcategoryToggle(subcategory._id)}
-                      className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
+                      className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary"
                     />
                     <div className="text-sm">
                       <div className="font-medium text-gray-700">{subcategory.name}</div>
@@ -191,7 +191,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
                 ))}
               </div>
             )}
-            
+
             {formData.subcategories.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
                 {formData.subcategories.map(subcategoryId => {
@@ -199,13 +199,13 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
                   return subcategory ? (
                     <span
                       key={subcategoryId}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary"
                     >
                       {subcategory.name}
                       <button
                         type="button"
                         onClick={() => handleSubcategoryToggle(subcategoryId)}
-                        className="ml-2 text-green-600 hover:text-green-800"
+                        className="ml-2 text-primary hover:text-primary-dark"
                       >
                         ×
                       </button>
@@ -226,7 +226,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
             name="brand"
             value={formData.brand}
             onChange={onInputChange}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
             required
             disabled={brandsLoading}
           >

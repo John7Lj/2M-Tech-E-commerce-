@@ -27,8 +27,8 @@ export const currencyApi = createApi({
     reducerPath: 'currencyAPI',
     baseQuery: fetchBaseQuery({
         baseUrl: import.meta.env.VITE_SERVER_URL 
-            ? `${import.meta.env.VITE_SERVER_URL}/api/v1/currencies`
-            : `/api/v1/currencies`,
+            ? `${import.meta.env.VITE_SERVER_URL}/currencies`
+            : `/currencies`,
         credentials: 'include',
     }),
     tagTypes: ['Currency'],

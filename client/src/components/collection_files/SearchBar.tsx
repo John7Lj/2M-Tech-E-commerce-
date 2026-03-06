@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, X, Loader2, ShoppingCart, Star, Tag } from 'lucide-react';
+import { Search, X, Loader2, ShoppingCart, Star } from 'lucide-react';
 import { useSearchProductsQuery } from '../../redux/api/product.api';
 import { Product } from '../../types/api-types';
 import { useDispatch } from 'react-redux';
@@ -20,7 +20,7 @@ const HeaderSearchBar: React.FC<HeaderSearchBarProps> = ({ className = '' }) => 
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout>();
-  const {currencySymbol} = useConstants();
+  const { currencySymbol } = useConstants();
   // Debounce search query
   useEffect(() => {
     if (timeoutRef.current) {
@@ -117,11 +117,10 @@ const HeaderSearchBar: React.FC<HeaderSearchBarProps> = ({ className = '' }) => 
   return (
     <div className={`w-full ${className}`} ref={searchContainerRef}>
       <form onSubmit={handleSearchSubmit} className="relative">
-        <div className={`relative transition-all duration-300 ${
-          isSearchFocused 
-            ? 'transform scale-105 shadow-lg' 
-            : 'shadow-md hover:shadow-lg'
-        }`}>
+        <div className={`relative transition-all duration-300 ${isSearchFocused
+          ? 'transform scale-105 shadow-lg'
+          : 'shadow-md hover:shadow-lg'
+          }`}>
           {/* Search Input Container - Compact for header */}
           <div className="relative">
             <input
@@ -134,16 +133,16 @@ const HeaderSearchBar: React.FC<HeaderSearchBarProps> = ({ className = '' }) => 
                 bg-white/95 backdrop-blur-sm border-2 rounded-lg md:rounded-2xl
                 transition-all duration-300 outline-none font-medium
                 placeholder:text-gray-400 placeholder:font-normal
-                ${isSearchFocused 
-                  ? 'border-purple-400 bg-white shadow-inner' 
-                  : 'border-gray-200 hover:border-purple-300'
+                text-gray-900 dark:text-white
+                ${isSearchFocused
+                  ? 'border-primary bg-white dark:bg-gray-900 shadow-inner'
+                  : 'border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-950/50 hover:border-primary/30'
                 }`}
             />
-            
+
             {/* Search Icon */}
             <div className={`absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 
-              transition-all duration-300 ${
-                isSearchFocused ? 'text-purple-600 scale-110' : 'text-gray-400'
+              transition-all duration-300 ${isSearchFocused ? 'text-primary scale-110' : 'text-gray-400'
               }`}>
               <Search className="w-4 h-4 md:w-5 md:h-5" />
             </div>
@@ -169,8 +168,8 @@ const HeaderSearchBar: React.FC<HeaderSearchBarProps> = ({ className = '' }) => 
                 h-8 md:h-10 px-3 md:px-4 rounded-md md:rounded-xl font-semibold text-xs md:text-sm
                 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed z-10
                 ${searchQuery.trim()
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-md hover:shadow-lg'
-                  : 'bg-gray-100 text-gray-400'
+                  ? 'bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary-dark'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-400'
                 }`}
             >
               Go
@@ -180,11 +179,11 @@ const HeaderSearchBar: React.FC<HeaderSearchBarProps> = ({ className = '' }) => 
 
         {/* Real-time Search Results - Positioned for header */}
         {showResults && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200 max-h-80 overflow-hidden z-50">
+          <div className="absolute top-full left-0 right-0 mt-3 bg-white dark:bg-gray-950 rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-gray-800 max-h-[28rem] overflow-hidden z-[100] transition-all duration-300 animate-in fade-in slide-in-from-top-2">
             {isLoading ? (
-              <div className="flex items-center justify-center py-6">
-                <Loader2 className="w-5 h-5 animate-spin text-purple-600 mr-2" />
-                <span className="text-gray-600 text-sm">Searching...</span>
+              <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-primary mb-3" />
+                <span className="text-gray-500 dark:text-gray-400 text-xs font-black uppercase tracking-widest">Searching...</span>
               </div>
             ) : error ? (
               <div className="p-4 text-center">
@@ -193,29 +192,29 @@ const HeaderSearchBar: React.FC<HeaderSearchBarProps> = ({ className = '' }) => 
             ) : searchResults?.products && searchResults.products.length > 0 ? (
               <div className="max-h-80 overflow-y-auto">
                 {/* Results Header */}
-                <div className="sticky top-0 bg-white/90 backdrop-blur-sm border-b border-gray-100 px-4 py-2">
+                <div className="sticky top-0 bg-white/90 dark:bg-secondary-dark/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-6 py-4 z-10">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs text-gray-600">
-                      Found {searchResults.totalProducts} products
+                    <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                      Results ({searchResults.totalProducts})
                     </p>
                     {searchResults.totalProducts > 20 && (
                       <button
                         onClick={() => navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`)}
-                        className="text-xs text-purple-600 hover:text-purple-700 font-medium"
+                        className="text-[10px] font-black text-primary hover:text-primary-dark uppercase tracking-widest transition-all"
                       >
-                        View all →
+                        View all
                       </button>
                     )}
                   </div>
                 </div>
 
                 {/* Products List - Compact for header */}
-                <div className="p-1">
+                <div className="p-2">
                   {searchResults.products.slice(0, 20).map((product: Product) => (
                     <div
                       key={product._id}
                       onClick={() => handleProductClick(product._id)}
-                      className="flex items-center p-2 hover:bg-purple-50 rounded-lg cursor-pointer transition-all duration-200 group"
+                      className="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-primary/5 rounded-2xl cursor-pointer transition-all duration-300 group"
                     >
                       {/* Product Image - Smaller for header */}
                       <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
@@ -225,8 +224,8 @@ const HeaderSearchBar: React.FC<HeaderSearchBarProps> = ({ className = '' }) => 
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                         />
                         {product.featured && (
-                          <div className="absolute top-0.5 left-0.5">
-                            <Star className="w-2 h-2 text-purple-600 fill-current" />
+                          <div className="absolute top-1 left-1">
+                            <Star className="w-2.5 h-2.5 text-yellow-500 fill-current" />
                           </div>
                         )}
                         {product.stock === 0 && (
@@ -237,20 +236,17 @@ const HeaderSearchBar: React.FC<HeaderSearchBarProps> = ({ className = '' }) => 
                       </div>
 
                       {/* Product Info - Compact */}
-                      <div className="flex-1 ml-3 min-w-0">
-                        <div className="flex items-center gap-1 mb-0.5">
-                          <Tag className="w-2 h-2 text-purple-500 flex-shrink-0" />
-                        </div>
-                        <h4 className="font-medium text-gray-900 text-xs leading-tight mb-1 group-hover:text-purple-700 transition-colors duration-200">
-                          {truncateText(product.name, 35)}
+                      <div className="flex-1 ml-4 min-w-0">
+                        <h4 className="font-bold text-gray-900 dark:text-white text-xs leading-snug mb-1 group-hover:text-primary transition-colors duration-300">
+                          {truncateText(product.name, 45)}
                         </h4>
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-purple-600 text-xs">
+                          <span className="font-black text-primary text-xs tracking-tight">
                             {currencySymbol} {product.price.toLocaleString()}
                           </span>
                           {product.stock > 0 && product.stock <= 5 && (
-                            <span className="text-[10px] text-orange-600 font-medium">
-                              Only {product.stock} left
+                            <span className="text-[10px] text-orange-500 font-black uppercase tracking-tighter">
+                              {product.stock} Left
                             </span>
                           )}
                         </div>
@@ -260,9 +256,9 @@ const HeaderSearchBar: React.FC<HeaderSearchBarProps> = ({ className = '' }) => 
                       {product.stock > 0 && (
                         <button
                           onClick={(e) => handleAddToCart(product, e)}
-                          className="ml-2 w-6 h-6 bg-purple-600 hover:bg-purple-700 text-white rounded-md flex items-center justify-center transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-105"
+                          className="ml-4 w-9 h-9 bg-primary text-white rounded-xl flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 shadow-lg shadow-primary/30"
                         >
-                          <ShoppingCart className="w-3 h-3" />
+                          <ShoppingCart className="w-4 h-4" />
                         </button>
                       )}
                     </div>
