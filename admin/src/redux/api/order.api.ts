@@ -1,12 +1,11 @@
+import { getViteServerUrl } from "../../utils/url";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { AllOrdersResponse, MessageResponse, NewOrderRequest, OrderDetailsResponse, UpdateOrderRequest } from "../../types/api-types";
 
 export const orderApi = createApi({
     reducerPath: "orderApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: import.meta.env.VITE_SERVER_URL
-            ? `${import.meta.env.VITE_SERVER_URL}/orders`
-            : `/orders`,
+        baseUrl: `${getViteServerUrl(import.meta.env.VITE_SERVER_URL)}/orders`,
         credentials: 'include',
                 prepareHeaders: async (headers) => {
             const token = localStorage.getItem('admin_token');

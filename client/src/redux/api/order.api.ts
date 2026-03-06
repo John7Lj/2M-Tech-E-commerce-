@@ -1,3 +1,4 @@
+import { getViteServerUrl } from "../../utils/url";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { auth } from "../../firebaseConfig";
 import { AllOrdersResponse, MessageResponse, NewOrderRequest, OrderDetailsResponse } from "../../types/api-types";
@@ -5,9 +6,7 @@ import { AllOrdersResponse, MessageResponse, NewOrderRequest, OrderDetailsRespon
 export const orderApi = createApi({
     reducerPath: "orderApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: import.meta.env.VITE_SERVER_URL
-            ? `${import.meta.env.VITE_SERVER_URL}/orders`
-            : `/orders`,
+        baseUrl: `${getViteServerUrl(import.meta.env.VITE_SERVER_URL)}/orders`,
         credentials: 'include',
         prepareHeaders: async (headers) => {
             await auth.authStateReady();

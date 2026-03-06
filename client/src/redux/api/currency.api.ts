@@ -1,3 +1,4 @@
+import { getViteServerUrl } from "../../utils/url";
 // admin/src/redux/api/currency.api.ts
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -26,9 +27,7 @@ export interface CreateCurrencyRequest {
 export const currencyApi = createApi({
     reducerPath: 'currencyAPI',
     baseQuery: fetchBaseQuery({
-        baseUrl: import.meta.env.VITE_SERVER_URL 
-            ? `${import.meta.env.VITE_SERVER_URL}/currencies`
-            : `/currencies`,
+        baseUrl: `${getViteServerUrl(import.meta.env.VITE_SERVER_URL)}/currencies`,
         credentials: 'include',
     }),
     tagTypes: ['Currency'],

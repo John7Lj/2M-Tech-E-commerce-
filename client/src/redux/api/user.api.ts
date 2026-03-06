@@ -1,3 +1,4 @@
+import { getViteServerUrl } from "../../utils/url";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { auth } from '../../firebaseConfig';
 import { UserLoginRequest, UserLoginResponse, UserRegisterRequest, UserResponse } from '../../types/api-types';
@@ -5,9 +6,7 @@ import { UserLoginRequest, UserLoginResponse, UserRegisterRequest, UserResponse 
 export const userApi = createApi({
     reducerPath: 'userAPI',
     baseQuery: fetchBaseQuery({
-        baseUrl: import.meta.env.VITE_SERVER_URL
-            ? `${import.meta.env.VITE_SERVER_URL}/auth`
-            : `/auth`,
+        baseUrl: `${getViteServerUrl(import.meta.env.VITE_SERVER_URL)}/auth`,
         credentials: 'include',
         prepareHeaders: async (headers, { endpoint }) => {
             const user = auth.currentUser;

@@ -1,3 +1,4 @@
+import { getViteServerUrl } from "../../utils/url";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export interface ShippingTier {
@@ -41,9 +42,7 @@ export interface ShippingCostResponse {
 export const shippingTierApi = createApi({
     reducerPath: 'shippingTierAPI',
     baseQuery: fetchBaseQuery({
-        baseUrl: import.meta.env.VITE_SERVER_URL 
-            ? `${import.meta.env.VITE_SERVER_URL}/shippingTiers`
-            : `/shippingTiers`,
+        baseUrl: `${getViteServerUrl(import.meta.env.VITE_SERVER_URL)}/shippingTiers`,
         credentials: 'include',
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');

@@ -1,3 +1,4 @@
+import { getViteServerUrl } from "../../utils/url";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { AllCouponsResponse, ApplyCouponRequest, ApplyCouponResponse} from '../../types/api-types';
 
@@ -5,9 +6,7 @@ import { AllCouponsResponse, ApplyCouponRequest, ApplyCouponResponse} from '../.
 export const couponApi = createApi({
     reducerPath: 'couponApi',
     baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_SERVER_URL 
-        ? `${import.meta.env.VITE_SERVER_URL}/coupons`
-        : `/coupons`,
+    baseUrl: `${getViteServerUrl(import.meta.env.VITE_SERVER_URL)}/coupons`,
     credentials: 'include',
     prepareHeaders: (headers) => {
         headers.set('Content-Type', 'application/json');

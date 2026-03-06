@@ -1,12 +1,11 @@
+import { getViteServerUrl } from "../../utils/url";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Page, PageDetailResponse } from '../../types/api-types';
 
 export const pageApi = createApi({
   reducerPath: 'pageApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_SERVER_URL
-      ? `${import.meta.env.VITE_SERVER_URL}/pages`
-      : `/api/pages`,
+    baseUrl: `${getViteServerUrl(import.meta.env.VITE_SERVER_URL)}/pages`,
     credentials: 'include',
   }),
   tagTypes: ['Page'],

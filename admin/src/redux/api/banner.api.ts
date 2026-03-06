@@ -1,3 +1,4 @@
+import { getViteServerUrl } from "../../utils/url";
 // admin/src/redux/api/banner.api.ts
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { MessageResponse } from "../../types/api-types";
@@ -59,9 +60,7 @@ export interface ToggleBannerStatusRequest {
 export const bannerApi = createApi({
   reducerPath: 'bannerApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_SERVER_URL
-      ? `${import.meta.env.VITE_SERVER_URL}/banners`
-      : `/banners`,
+    baseUrl: `${getViteServerUrl(import.meta.env.VITE_SERVER_URL)}/banners`,
     credentials: 'include',
             prepareHeaders: async (headers) => {
             const token = localStorage.getItem('admin_token');

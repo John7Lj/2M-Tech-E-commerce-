@@ -1,3 +1,4 @@
+import { getViteServerUrl } from "../../utils/url";
 // client/src/redux/api/category.api.ts
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
