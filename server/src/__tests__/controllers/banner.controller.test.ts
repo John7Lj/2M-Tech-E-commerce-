@@ -13,7 +13,7 @@ import {
     getBannerById,
     deleteBanner,
     toggleBannerStatus,
-} from '../../controllers/banner.controller';
+} from '../../modules/admin/controllers/banner.controller';
 import { Request, Response, NextFunction } from 'express';
 
 let categoryId: string;

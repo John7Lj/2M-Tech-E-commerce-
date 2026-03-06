@@ -9,7 +9,8 @@ import { Category } from '../../models/category.model';
 import { Brand } from '../../models/brand.model';
 import Order from '../../models/order.model';
 import Coupon from '../../models/coupon.model';
-import { newOrder, updateOrderStatus, deleteOrder, getAllOrders, getOrder } from '../../controllers/order.controller';
+import { updateOrderStatus, deleteOrder, getAllOrders } from '../../modules/admin/controllers/order.controller';
+import { newOrder, getOrder } from '../../modules/client/controllers/order.controller';
 import { Request, Response, NextFunction } from 'express';
 
 let userId: string;

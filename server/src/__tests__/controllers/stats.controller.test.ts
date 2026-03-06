@@ -9,7 +9,7 @@ import { Category } from '../../models/category.model';
 import { Brand } from '../../models/brand.model';
 import Order from '../../models/order.model';
 import Coupon from '../../models/coupon.model';
-import { getStats } from '../../controllers/stats.controller';
+import { getStats } from '../../modules/admin/controllers/stats.controller';
 import { Request, Response, NextFunction } from 'express';
 
 const mockReq = (): Request => ({} as Request);

@@ -5,12 +5,14 @@ import '../setup';
 import { Brand } from '../../models/brand.model';
 import {
     createBrand,
-    getAllBrands,
-    getBrandById,
     updateBrand,
     deleteBrand,
+} from '../../modules/admin/controllers/brand.controller';
+import {
+    getAllBrands,
+    getBrandById,
     getBrandsForDropdown,
-} from '../../controllers/brand.controller';
+} from '../../modules/client/controllers/brand.controller';
 import { Request, Response, NextFunction } from 'express';
 
 // Mock cloudinary deleteImage

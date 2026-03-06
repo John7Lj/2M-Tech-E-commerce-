@@ -8,13 +8,15 @@ import { Product } from '../../models/product.model';
 import { Brand } from '../../models/brand.model';
 import {
     createSubcategory,
-    getAllSubcategories,
-    getSubcategoriesByCategory,
-    getSubcategory,
     updateSubcategory,
     deleteSubcategory,
     permanentDeleteSubcategory,
-} from '../../controllers/subcategory.controller';
+} from '../../modules/admin/controllers/subcategory.controller';
+import {
+    getAllSubcategories,
+    getSubcategoriesByCategory,
+    getSubcategory,
+} from '../../modules/client/controllers/subcategory.controller';
 import { Request, Response } from 'express';
 
 let categoryId: string;

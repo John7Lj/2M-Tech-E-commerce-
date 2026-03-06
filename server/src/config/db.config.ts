@@ -9,7 +9,7 @@ if (!MONGO_URI) {
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(MONGO_URI, { dbName: '2m' });
+        await mongoose.connect(MONGO_URI, { dbName: 'new_2m' });
     } catch (error) {
         throw error;
     }

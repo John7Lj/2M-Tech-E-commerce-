@@ -8,17 +8,19 @@ import { Category } from '../../models/category.model';
 import { Subcategory } from '../../models/subcategory.model';
 import { Brand } from '../../models/brand.model';
 import {
+    toggleFeaturedStatus,
+    togglePublishedStatus,
+} from '../../modules/admin/controllers/product.controller';
+import {
     getLatestProducts,
     getAllProducts,
     getProductDetails,
     searchProducts,
     getAllCategories,
-    toggleFeaturedStatus,
-    togglePublishedStatus,
     getProductsByCategory,
     getProductsByBrand,
     getProductsBySubcategory,
-} from '../../controllers/product.controller';
+} from '../../modules/client/controllers/product.controller';
 import { Request, Response, NextFunction } from 'express';
 
 let categoryId: string;

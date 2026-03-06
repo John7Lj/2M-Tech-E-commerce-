@@ -4,10 +4,12 @@
 import '../setup';
 import Settings from '../../models/settings.model';
 import {
-    getSettings,
     updateSettings,
     clearSettings,
-} from '../../controllers/settings.controller';
+} from '../../modules/admin/controllers/settings.controller';
+import {
+    getSettings,
+} from '../../modules/client/controllers/settings.controller';
 import { Request, Response, NextFunction } from 'express';
 
 const mockReq = (body = {}): Request => ({

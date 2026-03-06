@@ -7,12 +7,14 @@ import { Product } from '../../models/product.model';
 import { Category } from '../../models/category.model';
 import { Brand } from '../../models/brand.model';
 import {
-    getAllCurrencies,
-    getDefaultCurrency,
     createCurrency,
     setDefaultCurrency,
     deleteCurrency,
-} from '../../controllers/currency.controller';
+} from '../../modules/admin/controllers/currency.controller';
+import {
+    getAllCurrencies,
+    getDefaultCurrency,
+} from '../../modules/client/controllers/currency.controller';
 import { Request, Response } from 'express';
 
 const mockReq = (body = {}, params = {}): Request => ({

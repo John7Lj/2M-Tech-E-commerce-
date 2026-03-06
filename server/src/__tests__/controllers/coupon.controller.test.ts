@@ -6,7 +6,8 @@ import Coupon from '../../models/coupon.model';
 import { ApiError } from '../../utils/ApiError';
 
 // We test the controller logic directly since the routes require auth middleware
-import { applyCoupon, newCoupon, deleteCoupon, getAllCoupons } from '../../controllers/coupon.controller';
+import { newCoupon, deleteCoupon, getAllCoupons } from '../../modules/admin/controllers/coupon.controller';
+import { applyCoupon } from '../../modules/client/controllers/coupon.controller';
 import { Request, Response, NextFunction } from 'express';
 
 const mockReq = (body = {}, params = {}): Request => ({

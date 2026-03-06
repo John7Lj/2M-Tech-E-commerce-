@@ -5,11 +5,13 @@ import '../setup';
 import ShippingTier from '../../models/shippingTier.model';
 import {
     createShippingTier,
-    getAllShippingTiers,
-    calculateShippingCost,
     deleteShippingTier,
     updateShippingTier,
-} from '../../controllers/shippingTier.controller';
+} from '../../modules/admin/controllers/shippingTier.controller';
+import {
+    getAllShippingTiers,
+    calculateShippingCost,
+} from '../../modules/client/controllers/shippingTier.controller';
 import { Request, Response } from 'express';
 
 const mockReq = (body = {}, params = {}, query = {}): Request => ({

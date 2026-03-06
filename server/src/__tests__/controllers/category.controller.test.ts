@@ -7,13 +7,15 @@ import { Product } from '../../models/product.model';
 import { Brand } from '../../models/brand.model';
 import {
     createCategory,
-    getAllCategories,
     getAllCategoriesAdmin,
-    getCategory,
     updateCategory,
     deleteCategory,
     permanentDeleteCategory,
-} from '../../controllers/category.controller';
+} from '../../modules/admin/controllers/category.controller';
+import {
+    getAllCategories,
+    getCategory,
+} from '../../modules/client/controllers/category.controller';
 import { Request, Response } from 'express';
 
 const mockReq = (body = {}, params = {}, file: any = null): any => ({

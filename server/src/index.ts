@@ -56,8 +56,12 @@ const corsOptions = {
 
     const isDevelopment = process.env.NODE_ENV === 'development';
 
-    // Allow localhost and 127.0.0.1 always (dev/test)
-    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+    // Allow localhost, 127.0.0.1, and local network IPs always in development
+    if (
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1') ||
+      (isDevelopment && origin.includes('192.168.0.'))
+    ) {
       return callback(null, true);
     }
 

@@ -4,12 +4,8 @@
 import '../setup';
 import { Page } from '../../models/page.model';
 import {
-    getAllPages,
-    getPageBySlug,
-    createPage,
-    updatePage,
-    deletePage,
-} from '../../controllers/page.controller';
+import { createPage, updatePage, deletePage } from '../../modules/admin/controllers/page.controller';
+import { getAllPages, getPageBySlug } from '../../modules/client/controllers/page.controller';
 import { Request, Response, NextFunction } from 'express';
 
 const mockReq = (body = {}, params = {}): Request => ({
