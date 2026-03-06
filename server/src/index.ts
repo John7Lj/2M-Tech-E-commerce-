@@ -147,53 +147,36 @@ if (process.env.NODE_ENV === 'production') {
 
   if (clientExists || adminExists) {
     if (clientExists) app.use(express.static(clientPath));
-    if (adminExists) app.use(express.static(adminPath));
+    if (adminExists) app.use('/admin', express.static(adminPath));
 
-    app.get('*', (req: Request, res: Response) => {
+    // Fallback for SPA routing
+    app.get('*', (req: Request, res: Response, next: NextFunction) => {
+      // Never catch API routes in the wildcard handler
       if (req.path.startsWith('/api/')) {
-        return res.status(404).json({ success: false, message: 'API endpoint not found' });
+        return next();
       }
 
-      // Serve admin app for /admin routes
       if (req.path.startsWith('/admin') && adminExists) {
         return res.sendFile(path.join(adminPath, 'index.html'));
       }
 
-      // Default to client app
       if (clientExists) {
         return res.sendFile(path.join(clientPath, 'index.html'));
       }
 
-      res.status(404).json({ success: false, message: 'Resource not found' });
-    });
-  } else {
-    app.get('/', (req: Request, res: Response) => {
-      res.json({
-        success: true,
-        message: 'API is running 🚀',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0',
-      });
-    });
-
-    app.get('*', (req: Request, res: Response) => {
-      if (!req.path.startsWith('/api/')) {
-        res.status(404).json({
-          success: false,
-          message: 'This is an API-only deployment.',
-        });
-      }
+      next();
     });
   }
-} else {
-  app.get('/', (req: Request, res: Response) => {
-    res.json({
-      success: true,
-      message: 'API is running 🚀 [Development]',
-      timestamp: new Date().toISOString(),
-    });
-  });
 }
+
+// Final root response if nothing else matched
+app.get('/', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: `API is running 🚀 [${process.env.NODE_ENV || 'development'}]`,
+    timestamp: new Date().toISOString(),
+  });
+});
 
 // Error handling middleware — ApiError handler first, then generic catch-all
 app.use(apiErrorMiddleware);
