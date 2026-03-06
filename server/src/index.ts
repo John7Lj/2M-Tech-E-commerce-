@@ -46,7 +46,8 @@ const allowedOrigins = [
   'http://192.168.0.247:5175',
   'http://192.168.0.247:5176',
   'https://blurz17admin.vercel.app',
-  process.env.CLIENT_URL,
+  process.env.CLIENT_URL?.trim(),
+  process.env.ADMIN_URL?.trim(),
 ].filter(Boolean) as string[];
 
 const corsOptions = {
