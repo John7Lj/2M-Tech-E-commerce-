@@ -55,8 +55,8 @@ const App: React.FC = () => {
         }
     }, [data, error, isFetching, dispatch]);
 
-    // Show loader while loading user data OR if we're currently fetching the initial 'me' request
-    if (loading || isFetching) return <Loader />;
+    // Admin application route level guards (AdminRoute) handle the loading state
+    // We don't block the entire tree to avoid unmounting the app during RTK Query refetches.
 
     return (
         <>
@@ -69,9 +69,9 @@ const App: React.FC = () => {
                             <Route
                                 path="/"
                                 element={
-                                    user && user.role === 'admin'
+                                    loading ? <Loader /> : (user && user.role === 'admin'
                                         ? <Navigate to="/admin/dashboard" replace />
-                                        : <Navigate to="/auth" replace />
+                                        : <Navigate to="/auth" replace />)
                                 }
                             />
 

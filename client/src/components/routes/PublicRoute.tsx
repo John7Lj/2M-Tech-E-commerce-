@@ -2,9 +2,12 @@ import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import Loader from '../common/Loader';
 
 const PublicRoute: React.FC = () => {
-  const user = useSelector((state: RootState) => state.user.user);
+  const { user, loading } = useSelector((state: RootState) => state.user);
+
+  if (loading) return <Loader />;
 
   return user ? <Navigate to="/" /> : <Outlet />;
 };

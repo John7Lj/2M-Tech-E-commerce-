@@ -1,6 +1,6 @@
 // client/src/App.tsx - Updated with banner route
 import React, { Suspense, lazy, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,7 +11,7 @@ import ScrollToTop from './components/common/ScrollToTop';
 import Loader from './components/common/Loader';
 import { useGetMeQuery } from './redux/api/user.api';
 import { userExists, userNotExists } from './redux/reducers/user.reducer';
-import { AppDispatch, RootState } from './redux/store';
+import { AppDispatch } from './redux/store';
 import DynamicPage from './pages/DynamicPage';
 import { useMetadata } from './hooks/useMetadata';
 
@@ -41,7 +41,6 @@ const NotFoundPage = lazy(() => import('./pages/NotFound'));
 const App: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { data, error } = useGetMeQuery();
-    const { loading } = useSelector((state: RootState) => state.user);
     useMetadata();
 
     // Dispatch user status on data or error change
@@ -52,9 +51,8 @@ const App: React.FC = () => {
             dispatch(userNotExists());
         }
     }, [data, error, dispatch]);
-
-    // Show loader while loading user data
-    if (loading) return <Loader />;
+    // Ensure we don't block the screen entirely while checking user authentication.
+    // The specific route guards (ProtectedRoute, PublicRoute) will handle loader display.
 
     return (
         <>
