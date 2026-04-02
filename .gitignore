@@ -22,7 +22,6 @@ pids
 *.pid
 *.seed
 *.pid.lock
-
 # IDE files
 .vscode/
 .idea/
